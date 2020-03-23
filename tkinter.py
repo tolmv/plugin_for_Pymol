@@ -130,7 +130,7 @@ class Restraints():
                 if f <= 0:
                     raise ValueError
             except ValueError:
-                mb.showerror("ERROR", "Error, please check your line {}".format(i + 1))
+                self.entry_all[i]['bg'] = "red"
                 return
             self.help.append(f)
 
