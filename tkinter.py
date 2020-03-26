@@ -140,7 +140,10 @@ class Restraints():
             self.K_phiB = self.help[5] * 0.238846  # force constant for dihedral (kCal/mol/rad^2)
             self.K_phiC = self.help[6] * 0.238846  # force constant for dihedral (kCal/mol/rad^2)
 
-
+        self.dict_all = {'K_r': self.K_r, 'K_thA': self.K_thA, 'K_thB': self.K_thB,
+                         'Temp': self.Temp, 'K_phiA': self.K_phiA, 'K_phiB': self.K_phiB, 
+                         'K_phiC': self.K_phiC}
+            
         self.rt = App(self.main)
 
 
