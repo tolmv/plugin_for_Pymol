@@ -117,6 +117,7 @@ class Restraints():
                 f = float(k())
                 if f <= 0:
                     raise ValueError
+                self.entry_all[i]['bg'] = 'white'
             except ValueError:
                 self.entry_all[i]['bg'] = "red"
                 return
