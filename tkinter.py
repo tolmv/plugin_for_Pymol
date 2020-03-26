@@ -142,7 +142,9 @@ class Restraints():
 
         self.dict_all = {'K_r': self.K_r, 'K_thA': self.K_thA, 'K_thB': self.K_thB,
                          'Temp': self.Temp, 'K_phiA': self.K_phiA, 'K_phiB': self.K_phiB, 
-                         'K_phiC': self.K_phiC}
+                         'K_phiC': self.K_phiC, 'r0': None, 'thA': None, 'thB': None, 
+                         'index_a': None, 'index_b': None, 'index_c': None, 
+                         'index_A': None, 'index_B': None, 'index_C': None}
             
         self.rt = App(self.main)
 
