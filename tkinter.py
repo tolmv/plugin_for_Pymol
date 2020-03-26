@@ -64,7 +64,7 @@ class Restraints():
 
         self.button_res = Button(main, text="Next -> ")
 
-        for i in range(10):
+        for i in range(6):
             self.label_all[i].grid(row=i + 1, column=1)
             self.entry_all[i].grid(row=i + 1, column=2)
 
