@@ -13,8 +13,10 @@ class Restraints():
         self.error = 0
         self.dG = 0
         self.main = main
+        self.K = 8.314472*0.001     # Gas constant in kJ/mol/K
+        self.V = 1.66               # standard volume in nm^3
 
-        self.labels = ['T', 'r0', 'thA', 'thB', 'K_r', 'K_thA',
+        self.labels = ['K_r', 'K_thA',
                        'K_thB', 'K_phiA', 'K_phiB', 'K_phiC']
 
         self.r_var = BooleanVar()
@@ -32,10 +34,6 @@ class Restraints():
         self.entry3 = Entry(main)
         self.entry4 = Entry(main)
         self.entry5 = Entry(main)
-        self.entry6 = Entry(main)
-        self.entry7 = Entry(main)
-        self.entry8 = Entry(main)
-        self.entry9 = Entry(main)
 
 
         self.label_answer0 = Label(main, font=15)
@@ -44,10 +42,7 @@ class Restraints():
         self.label_answer3 = Label(main, font=15)
         self.label_answer4 = Label(main, font=15)
         self.label_answer5 = Label(main, font=15)
-        self.label_answer6 = Label(main, font=15)
-        self.label_answer7 = Label(main, font=15)
-        self.label_answer8 = Label(main, font=15)
-        self.label_answer9 = Label(main, font=15)
+
 
         self.dimen0 = Label(main, font=15)
         self.dimen1 = Label(main, font=15)
@@ -55,21 +50,17 @@ class Restraints():
         self.dimen3 = Label(main, font=15)
         self.dimen4 = Label(main, font=15)
         self.dimen5 = Label(main, font=15)
-        self.dimen6 = Label(main, font=15)
-        self.dimen7 = Label(main, font=15)
-        self.dimen8 = Label(main, font=15)
-        self.dimen9 = Label(main, font=15)
+
 
         self.dimen_all = [self.dimen0, self.dimen1, self.dimen2, self.dimen3, self.dimen4,
-                          self.dimen5, self.dimen6, self.dimen7, self.dimen8, self.dimen9]
+                          self.dimen5]
 
         self.entry_all = [self.entry0, self.entry1, self.entry2, self.entry3, self.entry4,
-                          self.entry5, self.entry6, self.entry7, self.entry8, self.entry9]
+                          self.entry5]
 
         self.label_all = [self.label_answer0, self.label_answer1,
                           self.label_answer2, self.label_answer3, self.label_answer4,
-                          self.label_answer5, self.label_answer6,
-                          self.label_answer7, self.label_answer8, self.label_answer9]
+                          self.label_answer5]
 
         self.button_res = Button(main, text="Next -> ")
 
@@ -80,26 +71,20 @@ class Restraints():
         for i in range(len(self.dimen_all)):
             self.dimen_all[i].grid(row=i + 1, column=3)
 
-        self.dimen_all[0]['text'] = 'Kelvin'
-        self.dimen_all[1]['text'] = 'nm'
-        self.dimen_all[2]['text'] = 'kJ/mol/nm^2'
+        self.dimen_all[0]['text'] = 'kJ/mol/rad^2'
+        self.dimen_all[1]['text'] = 'kJ/mol/rad^2'
+        self.dimen_all[2]['text'] = 'kJ/mol/rad^2'
         self.dimen_all[3]['text'] = 'kJ/mol/rad^2'
         self.dimen_all[4]['text'] = 'kJ/mol/rad^2'
         self.dimen_all[5]['text'] = 'kJ/mol/rad^2'
-        self.dimen_all[6]['text'] = 'kJ/mol/rad^2'
-        self.dimen_all[7]['text'] = 'kJ/mol/rad^2'
-        self.dimen_all[8]['text'] = 'kJ/mol/rad^2'
-        self.dimen_all[9]['text'] = 'kJ/mol/rad^2'
 
         if self.r_var == 0:
-            self.dimen_all[2]['text'] = 'kCal/mol/nm^2'
+            self.dimen_all[0]['text'] = 'kCal/mol/nm^2'
+            self.dimen_all[1]['text'] = 'kCal/mol/rad^2'
+            self.dimen_all[2]['text'] = 'kCal/mol/rad^2'
             self.dimen_all[3]['text'] = 'kCal/mol/rad^2'
             self.dimen_all[4]['text'] = 'kCal/mol/rad^2'
             self.dimen_all[5]['text'] = 'kCal/mol/rad^2'
-            self.dimen_all[6]['text'] = 'kCal/mol/rad^2'
-            self.dimen_all[7]['text'] = 'kCal/mol/rad^2'
-            self.dimen_all[8]['text'] = 'kCal/mol/rad^2'
-            self.dimen_all[9]['text'] = 'kCal/mol/rad^2'
 
 
 
@@ -109,8 +94,7 @@ class Restraints():
 
         self.entry_all_get = [self.entry0.get, self.entry1.get, self.entry2.get,
                               self.entry3.get, self.entry4.get,
-                              self.entry5.get, self.entry6.get,
-                              self.entry7.get, self.entry8.get, self.entry9.get]
+                              self.entry5.get]
 
         self.button_res.grid(row=11, column=2)
 
@@ -134,14 +118,20 @@ class Restraints():
                 return
             self.help.append(f)
 
-        self.K = self.help[0]  # Gas constant in kJ/mol/K
-        self.V = self.help[2]  # standard volume in nm^3
-        self.T = self.help[1]  # Temperature in Kelvin
+        self.K_r = self.help[0]     # force constant for distance (kJ/mol/nm^2)
+        self.K_thA = self.help[1]   # force constant for angle (kJ/mol/rad^2)
+        self.K_thB = self.help[2]   # force constant for angle (kJ/mol/rad^2)
+        self.K_phiA = self.help[3]  # force constant for dihedral (kJ/mol/rad^2)
+        self.K_phiB = self.help[4]  # force constant for dihedral (kJ/mol/rad^2)
+        self.K_phiC = self.help[5]  # force constant for dihedral (kJ/mol/rad^2)
         if self.r_var == 0:
 
-            self.K = self.help[0] * 4.1868 # Gas constant in kJ/mol/K
-            self.V = self.help[2] # standard volume in nm^3
-            self.T = self.help[1] # Temperature in Kelvin
+            self.K_r = self.help[0] * 0.238846     # force constant for distance (kCal/mol/nm^2)
+            self.K_thA = self.help[1] * 0.238846   # force constant for angle (kCal/mol/rad^2)
+            self.K_thB = self.help[2] * 0.238846   # force constant for angle (kCal/mol/rad^2)
+            self.K_phiA = self.help[3] * 0.238846  # force constant for dihedral (kCal/mol/rad^2)
+            self.K_phiB = self.help[4] * 0.238846  # force constant for dihedral (kCal/mol/rad^2)
+            self.K_phiC = self.help[5] * 0.238846  # force constant for dihedral (kCal/mol/rad^2)
 
 
         self.rt = App(self.main)
