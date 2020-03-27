@@ -1,33 +1,44 @@
 import sys
 import math
+import webbrowser
+import tempfile
 from Tkinter import *
 import tkMessageBox as mb
 import numpy as np
 
+R = 8.314472*0.001     # Gas constant in kJ/mol/K
+V = 1.66               # standard volume in nm^3
+
+help_1 = """<html>
+<title>Help</title>
+<body>Help</body>
+</html>
+"""
+
+def Kcal_to_Kj(E):
+    return E * 4.1868
+
+bondForceParams = {'Temp': None,
+                   'K_r': None, 'K_thA': None, 'K_thB': None,
+                   'K_phiA': None, 'K_phiB': None,'K_phiC': None, 
+                   'r0': None, 'thA': None, 'thB': None,
+                   'index_a': None, 'index_b': None, 'index_c': None, 
+                   'index_A': None, 'index_B': None, 'index_C': None}
 
 class Restraints():
 
     def __init__(self, main):
         self.help = []
-        self.bol = True
-        self.error = 0
-        self.dG = 0
         self.main = main
-        self.K = 8.314472*0.001     # Gas constant in kJ/mol/K
-        self.V = 1.66               # standard volume in nm^3
-
-        self.labels = ['Temp','K_r', 'K_thA',
+        self.labels = ['Temp', 'K_r', 'K_thA',
                        'K_thB', 'K_phiA', 'K_phiB', 'K_phiC']
-
         self.r_var = BooleanVar()
-        self.r_var.set(1)
-        self.rcal1 = Radiobutton(text="kCal", variable=self.r_var, value=0)
-        self.rj1 = Radiobutton(text='kJ', variable=self.r_var, value=1)
-
+        self.r_var.set(0)
+        self.rj1 = Radiobutton(text='kJ', variable=self.r_var, value=0, command=self.refresh)
+        self.rcal1 = Radiobutton(text="kCal", variable=self.r_var, value=1, command=self.refresh)
         self.rj1.grid(row=0, column=0)
         self.rcal1.grid(row=0, column=1)
-
-
+        
         self.entry0 = Entry(main)
         self.entry1 = Entry(main)
         self.entry2 = Entry(main)
@@ -35,7 +46,6 @@ class Restraints():
         self.entry4 = Entry(main)
         self.entry5 = Entry(main)
         self.entry6 = Entry(main)
- 
 
         self.label_answer0 = Label(main, font=15)
         self.label_answer1 = Label(main, font=15)
@@ -44,8 +54,6 @@ class Restraints():
         self.label_answer4 = Label(main, font=15)
         self.label_answer5 = Label(main, font=15)
         self.label_answer6 = Label(main, font=15)
-
-
 
         self.dimen0 = Label(main, font=15)
         self.dimen1 = Label(main, font=15)
@@ -65,8 +73,6 @@ class Restraints():
                           self.label_answer2, self.label_answer3, self.label_answer4,
                           self.label_answer5, self.label_answer6]
 
-        self.button_res = Button(main, text="Next -> ")
-
         for i in range(7):
             self.label_all[i].grid(row=i + 1, column=1)
             self.entry_all[i].grid(row=i + 1, column=2)
@@ -82,16 +88,6 @@ class Restraints():
         self.dimen_all[5]['text'] = 'kJ/mol/rad^2'
         self.dimen_all[6]['text'] = 'kJ/mol/rad^2'
 
-        if self.r_var == 0:
-            self.dimen_all[1]['text'] = 'kCal/mol/nm^2'
-            self.dimen_all[2]['text'] = 'kCal/mol/rad^2'
-            self.dimen_all[3]['text'] = 'kCal/mol/rad^2'
-            self.dimen_all[4]['text'] = 'kCal/mol/rad^2'
-            self.dimen_all[5]['text'] = 'kCal/mol/rad^2'
-            self.dimen_all[6]['text'] = 'kCal/mol/rad^2'
-
-
-
         for i in range(len(self.label_all)):
             self.label_all[i]['text'] = self.labels[i]
 
@@ -100,18 +96,36 @@ class Restraints():
                               self.entry3.get, self.entry4.get,
                               self.entry5.get, self.entry6.get]
 
+        self.button_res = Button(main, text="Next -> ", command=self.validate)
         self.button_res.grid(row=11, column=2)
-
-        self.button_res.bind('<Button-1>', self.__calculate)
-
-        self.destroyProgr = Button(main, text='Exit', bg='black', command=main.destroy)
+        
+        self.destroyProgr = Button(main, text='Exit', bg='red', command=main.destroy)
         self.destroyProgr.grid(row=0, column=3)
 
-        self.helpProgr = Button(main, text=' ? ', bg='#ffb3fe')
+        self.helpProgr = Button(main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
         self.helpProgr.grid(row=12, column=0)
+    
+    def refresh(self):
 
-    def __calculate(self, event):
+        if self.r_var.get():
+            self.dimen_all[1].configure(text='kCal/mol/nm^2')
+            self.dimen_all[2].configure(text='kCal/mol/rad^2')
+            self.dimen_all[3].configure(text='kCal/mol/rad^2')
+            self.dimen_all[4].configure(text='kCal/mol/rad^2')
+            self.dimen_all[5].configure(text='kCal/mol/rad^2')
+            self.dimen_all[6].configure(text='kCal/mol/rad^2')
+        else:
+            self.dimen_all[1].configure(text='kJ/mol/nm^2')
+            self.dimen_all[2].configure(text='kJ/mol/rad^2')
+            self.dimen_all[3].configure(text='kJ/mol/rad^2')
+            self.dimen_all[4].configure(text='kJ/mol/rad^2')
+            self.dimen_all[5].configure(text='kJ/mol/rad^2')
+            self.dimen_all[6].configure(text='kJ/mol/rad^2')
+        
+        for dimen in self.dimen_all:
+            dimen.update()
 
+    def validate(self):
         for i, k in enumerate(self.entry_all_get):
             try:
                 f = float(k())
@@ -122,31 +136,26 @@ class Restraints():
                 self.entry_all[i]['bg'] = "red"
                 return
             self.help.append(f)
-            
-        self.Temp = self.help[0]
-        self.K_r = self.help[1]     # force constant for distance (kJ/mol/nm^2)
-        self.K_thA = self.help[2]   # force constant for angle (kJ/mol/rad^2)
-        self.K_thB = self.help[3]   # force constant for angle (kJ/mol/rad^2)
-        self.K_phiA = self.help[4]  # force constant for dihedral (kJ/mol/rad^2)
-        self.K_phiB = self.help[5]  # force constant for dihedral (kJ/mol/rad^2)
-        self.K_phiC = self.help[6]  # force constant for dihedral (kJ/mol/rad^2)
         
-        if self.r_var == 0:
-
-            self.K_r = self.help[1] * 0.238846     # force constant for distance (kCal/mol/nm^2)
-            self.K_thA = self.help[2] * 0.238846   # force constant for angle (kCal/mol/rad^2)
-            self.K_thB = self.help[3] * 0.238846   # force constant for angle (kCal/mol/rad^2)
-            self.K_phiA = self.help[4] * 0.238846  # force constant for dihedral (kCal/mol/rad^2)
-            self.K_phiB = self.help[5] * 0.238846  # force constant for dihedral (kCal/mol/rad^2)
-            self.K_phiC = self.help[6] * 0.238846  # force constant for dihedral (kCal/mol/rad^2)
-
-        self.dict_all = {'K_r': self.K_r, 'K_thA': self.K_thA, 'K_thB': self.K_thB,
-                         'Temp': self.Temp, 'K_phiA': self.K_phiA, 'K_phiB': self.K_phiB, 
-                         'K_phiC': self.K_phiC, 'r0': None, 'thA': None, 'thB': None, 
-                         'index_a': None, 'index_b': None, 'index_c': None, 
-                         'index_A': None, 'index_B': None, 'index_C': None}
-            
+        if self.r_var.get():
+            self.help = list((self.help[1],)) + list(map(Kcal_to_Kj, self.help[1:]))
+        
+        bondForceParams['Temp'] = self.help[0]   # Tepmerature (K)
+        bondForceParams['K_r'] = self.help[1]    # force constant for distance (kJ/mol/nm^2)
+        bondForceParams['K_thA'] = self.help[2]  # force constant for angle (kJ/mol/rad^2)
+        bondForceParams['K_thB'] = self.help[3]  # force constant for angle (kJ/mol/rad^2)
+        bondForceParams['K_phiA'] = self.help[4] # force constant for dihedral (kJ/mol/rad^2)
+        bondForceParams['K_phiB'] = self.help[5] # force constant for dihedral (kJ/mol/rad^2)
+        bondForceParams['K_phiC'] = self.help[6] # force constant for dihedral (kJ/mol/rad^2)
+        
         self.rt = App(self.main)
+
+    def getHelp(self):
+        with tempfile.NamedTemporaryFile('w', delete=False, suffix='.html') as f:
+            url = "file://" + f.name
+            f.write(help_1)
+        webbrowser.open(url)
+        
 
 
 class App():
@@ -161,6 +170,7 @@ def main():
     root = Tk()
     app = Restraints(root)
     root.mainloop()
+    print bondForceParams
 
 
 if __name__ == '__main__':
