@@ -1,4 +1,7 @@
 # coding=utf-8
+from __future__ import absolute_import
+from __future__ import print_function
+
 import tempfile
 import webbrowser
 from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Tk, Toplevel
@@ -166,7 +169,7 @@ def main():
     root = Tk()
     app = Restraints(root)
     root.mainloop()
-    print bondForceParams
+    print(bondForceParams)
 
 
 if __name__ == '__main__':

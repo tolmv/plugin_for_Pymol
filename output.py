@@ -1,4 +1,7 @@
 # coding=utf-8
+from __future__ import absolute_import
+from __future__ import print_function
+
 import math
 import tempfile
 import tkFileDialog
@@ -171,7 +174,7 @@ class Output(object):
             bondForceParams['index_B'],  # 15
             bondForceParams['index_c'],  # 16
             bondForceParams['index_C'])  # 17
-        print restraints
+        print(restraints)
         with open(self.topolFile, 'at') as f:
             f.write(restraints)
 
