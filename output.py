@@ -1,8 +1,9 @@
+# coding=utf-8
 import math
-import webbrowser
 import tempfile
 import tkFileDialog
 import tkMessageBox
+import webbrowser
 from Tkinter import BooleanVar, Radiobutton, Label, Button, Tk
 
 R = 8.314472 * 0.001  # Gas constant in kJ/mol/K
@@ -36,7 +37,7 @@ def calc_dG(T, r0, thA, thB, K_r, K_thA, K_thB, K_phiA, K_phiB, K_phiC):
             (8.0 * math.pi ** 2.0 * V) / (r0 ** 2.0 * math.sin(thA) * math.sin(thB))
             *
             (
-                    ((K_r * K_thA * K_thB * K_phiA * K_phiB * K_phiC) ** 0.5) / ((2.0 * math.pi * R * T) ** (3.0))
+                    ((K_r * K_thA * K_thB * K_phiA * K_phiB * K_phiC) ** 0.5) / ((2.0 * math.pi * R * T) ** 3.0)
             )
     )
 
@@ -44,8 +45,7 @@ def calc_dG(T, r0, thA, thB, K_r, K_thA, K_thB, K_phiA, K_phiB, K_phiC):
     return dG
 
 
-class Output():
-
+class Output(object):
     def __init__(self, main):
         self.dG_off_kJ = calc_dG(
             bondForceParams['T'],

@@ -1,7 +1,7 @@
-import webbrowser
+# coding=utf-8
 import tempfile
+import webbrowser
 from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Tk, Toplevel
-
 
 help_1 = """<html>
 <title>Help</title>
@@ -18,13 +18,12 @@ bondForceParams = {'T': None,
                    'K_r': None, 'K_thA': None, 'K_thB': None,
                    'K_phiA': None, 'K_phiB': None, 'K_phiC': None,
                    'r0': None, 'thA': None, 'thB': None,
-                   'phiA' : None, 'phiA' : None, 'phiA' : None,
+                   'phiA': None, 'phiB': None, 'phiC': None,
                    'index_a': None, 'index_b': None, 'index_c': None,
                    'index_A': None, 'index_B': None, 'index_C': None}
 
 
-class Restraints():
-
+class Restraints(object):
     def __init__(self, main):
         self.help = []
         self.main = main
@@ -135,7 +134,7 @@ class Restraints():
             self.help.append(f)
 
         if self.r_var.get():
-            self.help = list((self.help[1],)) + list(map(Kcal_to_Kj, self.help[1:]))
+            self.help = list((self.help[1],)) + list(map(kCal_to_kJ, self.help[1:]))
 
         bondForceParams['T'] = self.help[0]  # Temperature (K)
         bondForceParams['K_r'] = self.help[1]  # force constant for distance (kJ/mol/nm^2)
@@ -154,7 +153,7 @@ class Restraints():
         webbrowser.open(url)
 
 
-class App():
+class App(object):
     def __init__(self, main):
         self.res_top = Toplevel(main)
         self.now_do = Label(self.res_top, font=15)
