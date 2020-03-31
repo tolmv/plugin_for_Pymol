@@ -17,10 +17,11 @@ help_2 = """<html>
 bondForceParams = {'T': 300.0,
                    'K_r': 4184.0, 'K_thA': 41.84, 'K_thB': 41.84,
                    'K_phiA': 41.84, 'K_phiB': 41.84, 'K_phiC': 41.84,
-                   'r0':  0.50, 'thA': 69.7, 'thB': 48.1,
-                    'phiA' : None, 'phiA' : None, 'phiA' : None,
-                   'index_a': None, 'index_b': None, 'index_c': None,
-                   'index_A': None, 'index_B': None, 'index_C': None}
+                   'r0': 0.50, 'thA': 69.7, 'thB': 48.1,
+                   'phiA': 132.2, 'phiB': 123.2, 'phiC': -12.3,
+                   'index_a': 1, 'index_b': 2, 'index_c': 3,
+                   'index_A': 4, 'index_B': 5, 'index_C': 6}
+
 
 def kJ_to_kCal(E):
     return E / 4.1868
@@ -41,6 +42,7 @@ def calc_dG(T, r0, thA, thB, K_r, K_thA, K_thB, K_phiA, K_phiB, K_phiC):
 
     dG = - R * T * math.log(arg)
     return dG
+
 
 class Output():
 
@@ -108,8 +110,8 @@ class Output():
         if self.r_var.get():
             self.dimen0.configure(text='kCal')
             self.dimen1.configure(text='kCal')
-            self.answer0.configure(text = '{:>.3f}'.format(self.dG_off_kCal))
-            self.answer1.configure(text = '{:>.3f}'.format(self.dG_on_kCal))
+            self.answer0.configure(text='{:>.3f}'.format(self.dG_off_kCal))
+            self.answer1.configure(text='{:>.3f}'.format(self.dG_on_kCal))
         else:
             self.dimen0.configure(text='kJ')
             self.dimen1.configure(text='kJ')
@@ -129,29 +131,49 @@ class Output():
 
     def selectFile(self):
         self.topolFile = tkFileDialog.askopenfilename(initialdir="/", title="Select file",
-                                                filetypes=(("Topology files", "*.top"), ("all files", "*.*")))
+                                                      filetypes=(("Topology files", "*.top"), ("all files", "*.*")))
 
     def writeTopolFile(self):
         if self.topolFile is None:
             tkMessageBox.showerror("Error", "Topology file is not selected")
             return
-        restraints = """[ intermolecular_interactions]
-[ bonds ]
-; ai     aj    type   bA      kA     bB      kB
- 6573    1629  6      0.5     0.0    0.5   4184.0
- 
-[ angles ]
-; ai     aj    ak     type    thA      fcA        thB      fcB        
- 6573   1629   1626   1       69.7     0.0        69.7    41.84
- 6574   6573   1629   1       48.1     0.0        48.1    41.84 ; 
-
-[ dihedrals ]
-; ai     aj    ak    al    type     thA      fcA       thB      fcB        
- 6573    1629  1626  1623   2       149.2    0.0       149.2    41.84
- 6574    6573  1629  1626   2        76.2    0.0        76.2    41.84
- 6576    6574  6573  1629   2        71.1    0.0        71.1    41.84
-        """.format()
-
+        restraints = ("[ intermolecular_interactions ]\n"
+                      "[ bonds ]\n"
+                      "; ai     aj    type   bA      kA     bB      kB\n"
+                      " {12:d}    {13:d}  6      {0:.3f}     0.0    {0:.3f}   {6:.1f}\n"
+                      " \n"
+                      "[ angles ]\n"
+                      "; ai     aj    ak     type    thA      fcA        thB      fcB\n"
+                      " {14:d}   {12:d}   {13:d}   1       {1:.2f}     0.0        {1:.2f}    {7:.2f}\n"
+                      " {12:d}   {13:d}   {15:d}   1       {2:.2f}     0.0        {2:.2f}    {8:.2f}\n"
+                      "\n"
+                      "[ dihedrals ]\n"
+                      "; ai     aj    ak    al    type     thA      fcA       thB      fcB\n"
+                      " {16:d}   {14:d}   {12:d}   {13:d}   2       149.2    0.0       149.2    {9:.2f}\n"
+                      " {14:d}   {12:d}   {13:d}   {15:d}   2        76.2    0.0        76.2    {10:.2f}\n"
+                      " {12:d}   {13:d}   {15:d}   {17:d}   2        71.1    0.0        71.1    {11:.2f}\n"
+                      ).format(
+            bondForceParams['r0'],  # 0
+            bondForceParams['thA'],  # 1
+            bondForceParams['thB'],  # 2
+            bondForceParams['phiA'],  # 3
+            bondForceParams['phiB'],  # 4
+            bondForceParams['phiC'],  # 5
+            bondForceParams['K_r'],  # 6
+            bondForceParams['K_thA'],  # 7
+            bondForceParams['K_thB'],  # 8
+            bondForceParams['K_phiA'],  # 9
+            bondForceParams['K_phiB'],  # 10
+            bondForceParams['K_phiC'],  # 11
+            bondForceParams['index_a'],  # 12
+            bondForceParams['index_A'],  # 13
+            bondForceParams['index_b'],  # 14
+            bondForceParams['index_B'],  # 15
+            bondForceParams['index_c'],  # 16
+            bondForceParams['index_C'])  # 17
+        print restraints
+        with open(self.topolFile, 'at') as f:
+            f.write(restraints)
 
 
 def main():
@@ -162,4 +184,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
