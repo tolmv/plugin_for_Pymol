@@ -4,7 +4,8 @@ from __future__ import print_function
 
 import tempfile
 import webbrowser
-from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Tk, Toplevel
+from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Tk
+from tkMessageBox import showinfo
 
 help_1 = """<html>
 <title>Help</title>
@@ -16,20 +17,11 @@ help_1 = """<html>
 def kCal_to_kJ(E):
     return E * 4.1868
 
-
-bondForceParams = {'T': None,
-                   'K_r': None, 'K_thA': None, 'K_thB': None,
-                   'K_phiA': None, 'K_phiB': None, 'K_phiC': None,
-                   'r0': None, 'thA': None, 'thB': None,
-                   'phiA': None, 'phiB': None, 'phiC': None,
-                   'index_a': None, 'index_b': None, 'index_c': None,
-                   'index_A': None, 'index_B': None, 'index_C': None}
-
-
 class Restraints(object):
     def __init__(self, main):
         self.help = []
         self.main = main
+        self.isexit = False
         self.labels = ['Temp', 'K_r', 'K_thA',
                        'K_thB', 'K_phiA', 'K_phiB', 'K_phiC']
         self.r_var = BooleanVar()
@@ -98,11 +90,15 @@ class Restraints(object):
         self.button_res = Button(main, text="Next -> ", command=self.validate)
         self.button_res.grid(row=11, column=2)
 
-        self.destroyProgr = Button(main, text='Exit', bg='red', command=main.destroy)
+        self.destroyProgr = Button(main, text='Exit', bg='red', command=self.exit)
         self.destroyProgr.grid(row=0, column=3)
 
         self.helpProgr = Button(main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
         self.helpProgr.grid(row=12, column=0)
+
+    def exit(self):
+        self.isexit = True
+        self.main.destroy()
 
     def refresh(self):
 
@@ -146,8 +142,8 @@ class Restraints(object):
         bondForceParams['K_phiA'] = self.help[4]  # force constant for dihedral (kJ/mol/rad^2)
         bondForceParams['K_phiB'] = self.help[5]  # force constant for dihedral (kJ/mol/rad^2)
         bondForceParams['K_phiC'] = self.help[6]  # force constant for dihedral (kJ/mol/rad^2)
-
-        self.rt = App(self.main)
+        showinfo('Info', 'Now choose the atoms you need')
+        self.main.destroy()
 
     def getHelp(self):
         with tempfile.NamedTemporaryFile('w', delete=False, suffix='.html') as f:
@@ -155,22 +151,20 @@ class Restraints(object):
             f.write(help_1)
         webbrowser.open(url)
 
-
-class App(object):
-    def __init__(self, main):
-        self.res_top = Toplevel(main)
-        self.now_do = Label(self.res_top, font=15)
-        self.now_do['text'] = 'Now choose the atoms you need'
-        self.now_do.config(bd=20, bg='#aaffff')
-        self.now_do.pack()
-
-
 def main():
     root = Tk()
     app = Restraints(root)
     root.mainloop()
     print(bondForceParams)
+    print(app.isexit)
 
 
 if __name__ == '__main__':
+    bondForceParams = {'T': None,
+                       'K_r': None, 'K_thA': None, 'K_thB': None,
+                       'K_phiA': None, 'K_phiB': None, 'K_phiC': None,
+                       'r0': None, 'thA': None, 'thB': None,
+                       'phiA': None, 'phiB': None, 'phiC': None,
+                       'index_a': None, 'index_b': None, 'index_c': None,
+                       'index_A': None, 'index_B': None, 'index_C': None}
     main()

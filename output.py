@@ -4,10 +4,10 @@ from __future__ import print_function
 
 import math
 import tempfile
-import tkFileDialog
-import tkMessageBox
 import webbrowser
 from Tkinter import BooleanVar, Radiobutton, Label, Button, Tk
+from tkFileDialog import askopenfilename
+from tkMessageBox import showerror
 
 R = 8.314472 * 0.001  # Gas constant in kJ/mol/K
 V = 1.66  # standard volume in nm^3
@@ -17,14 +17,6 @@ help_2 = """<html>
 <body>Help</body>
 </html>
 """
-
-bondForceParams = {'T': 300.0,
-                   'K_r': 4184.0, 'K_thA': 41.84, 'K_thB': 41.84,
-                   'K_phiA': 41.84, 'K_phiB': 41.84, 'K_phiC': 41.84,
-                   'r0': 0.50, 'thA': 69.7, 'thB': 48.1,
-                   'phiA': 132.2, 'phiB': 123.2, 'phiC': -12.3,
-                   'index_a': 1, 'index_b': 2, 'index_c': 3,
-                   'index_A': 4, 'index_B': 5, 'index_C': 6}
 
 
 def kJ_to_kCal(E):
@@ -133,14 +125,14 @@ class Output(object):
         webbrowser.open(url)
 
     def selectFile(self):
-        self.topolFile = tkFileDialog.askopenfilename(initialdir="/", title="Select file",
-                                                      filetypes=(("Topology files", "*.top"), ("all files", "*.*")))
+        self.topolFile = askopenfilename(initialdir="/", title="Select file",
+                                         filetypes=(("Topology files", "*.top"), ("all files", "*.*")))
 
     def writeTopolFile(self):
         if self.topolFile is None:
-            tkMessageBox.showerror("Error", "Topology file is not selected")
+            showerror("Error", "Topology file is not selected")
             return
-        restraints = ("[ intermolecular_interactions ]\n"
+        restraints = ("\n\n[ intermolecular_interactions ]\n"
                       "[ bonds ]\n"
                       "; ai     aj    type   bA      kA     bB      kB\n"
                       " {12:d}    {13:d}  6      {0:.3f}     0.0    {0:.3f}   {6:.1f}\n"
@@ -179,11 +171,20 @@ class Output(object):
             f.write(restraints)
 
 
+
 def main():
     root = Tk()
-    app = Output(root)
+    Output(root)
     root.mainloop()
 
 
 if __name__ == '__main__':
+    bondForceParams = {'T': 300.0,
+                       'K_r': 4184.0, 'K_thA': 41.84, 'K_thB': 41.84,
+                       'K_phiA': 41.84, 'K_phiB': 41.84, 'K_phiC': 41.84,
+                       'r0': 0.50, 'thA': 69.7, 'thB': 48.1,
+                       'phiA': 132.2, 'phiB': 123.2, 'phiC': -12.3,
+                       'index_a': 1, 'index_b': 2, 'index_c': 3,
+                       'index_A': 4, 'index_B': 5, 'index_C': 6}
+
     main()
