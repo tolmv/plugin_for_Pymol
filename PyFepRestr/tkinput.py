@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import tempfile
 import webbrowser
-from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Tk
+from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button
 from tkMessageBox import showinfo
 
 help_1 = """<html>
@@ -22,6 +22,8 @@ class Restraints(object):
     def __init__(self, main, bondForceParams):
         self.help = []
         self.main = main
+        self.main.title('PyFepRestr')
+        self.main.protocol('WM_DELETE_WINDOW', self.exit)
         self.isexit = False
         self.labels = ['Temp', 'K_r', u'K_\u03b8A',
                        u'K_\u03b8B', u'K_\u03c6A', u'K_\u03c6B', u'K_\u03c6C']
@@ -29,8 +31,8 @@ class Restraints(object):
         self.r_var.set(0)
         self.rj1 = Radiobutton(main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
         self.rcal1 = Radiobutton(main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
-        self.rj1.grid(row=0, column=0)
-        self.rcal1.grid(row=0, column=1)
+        self.rj1.grid(row=0, column=0, padx=5, pady=5)
+        self.rcal1.grid(row=0, column=1, padx=5, pady=5)
 
         self.entry0 = Entry(main)
         self.entry1 = Entry(main)
@@ -66,12 +68,10 @@ class Restraints(object):
                           self.label_answer2, self.label_answer3, self.label_answer4,
                           self.label_answer5, self.label_answer6]
 
-        for i in range(7):
-            self.label_all[i].grid(row=i + 1, column=1)
-            self.entry_all[i].grid(row=i + 1, column=2)
-
-        for i in range(len(self.dimen_all)):
-            self.dimen_all[i].grid(row=i + 1, column=3)
+        for i, (label, entry, dimen) in enumerate(zip(self.label_all, self.entry_all, self.dimen_all)):
+            label.grid(row=i + 1, column=1, padx=5, pady=5)
+            entry.grid(row=i + 1, column=2, padx=5, pady=5)
+            dimen.grid(row=i + 1, column=3, padx=5, pady=5)
 
         self.dimen_all[0]['text'] = 'Kelvin'
         self.dimen_all[1]['text'] = u'kJ/mol/nm\u00b2'
@@ -89,13 +89,13 @@ class Restraints(object):
                               self.entry5.get, self.entry6.get]
         self.bondForceParams = bondForceParams
         self.button_res = Button(main, text="Next -> ", command=self.validate)
-        self.button_res.grid(row=11, column=2)
+        self.button_res.grid(row=11, column=2, padx=5, pady=5)
 
         self.destroyProgr = Button(main, text='Exit', bg='red', command=self.exit)
-        self.destroyProgr.grid(row=0, column=3)
+        self.destroyProgr.grid(row=0, column=3, padx=5, pady=5)
 
         self.helpProgr = Button(main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
-        self.helpProgr.grid(row=12, column=0)
+        self.helpProgr.grid(row=12, column=0, padx=5, pady=5)
 
     def exit(self):
         self.isexit = True
@@ -152,22 +152,3 @@ class Restraints(object):
             url = "file://" + f.name
             f.write(help_1)
         webbrowser.open(url)
-
-
-def main():
-    root = Tk()
-    bondForceParams = {'T': None,
-                       'K_r': None, 'K_thA': None, 'K_thB': None,
-                       'K_phiA': None, 'K_phiB': None, 'K_phiC': None,
-                       'r0': None, 'thA': None, 'thB': None,
-                       'phiA': None, 'phiB': None, 'phiC': None,
-                       'index_a': None, 'index_b': None, 'index_c': None,
-                       'index_A': None, 'index_B': None, 'index_C': None}
-    app = Restraints(root, bondForceParams)
-    root.mainloop()
-    print(bondForceParams)
-    print(app.isexit)
-
-
-if __name__ == '__main__':
-    main()

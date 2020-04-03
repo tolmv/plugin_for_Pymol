@@ -1,4 +1,7 @@
 # coding=utf-8
+from __future__ import absolute_import
+from __future__ import print_function
+
 from pymol import cmd, CmdException
 from pymol.wizard import Wizard
 
@@ -11,7 +14,7 @@ class RestraintWizard(object, Wizard):
         self.pick_count = 0
         self.object_prefix = "pw"
         self.error = None
-
+        self.iswait = True
         self.selection_mode = cmd.get_setting_legacy("mouse_selection_mode")
         cmd.set("mouse_selection_mode", 0)  # set selection mode to atomic
         cmd.deselect()
@@ -83,15 +86,32 @@ class RestraintWizard(object, Wizard):
         else:
             self.pickNextAtom(atom_name)
 
-            point1 = cmd.get_atom_coords("(%s%s)" % (self.object_prefix, "0"))
-            point2 = cmd.get_atom_coords("(%s%s)" % (self.object_prefix, "1"))
-            point3 = cmd.get_atom_coords("(%s%s)" % (self.object_prefix, "2"))
+            # point1 = cmd.get_atom_coords("(%s%s)" % (self.object_prefix, "0"))
+            # point2 = cmd.get_atom_coords("(%s%s)" % (self.object_prefix, "1"))
+            # point3 = cmd.get_atom_coords("(%s%s)" % (self.object_prefix, "2"))
             self.pick_count = 0
             self.reset()
+            self.SetBondForceParam()
+            cmd.set_wizard()
+            self.iswait = False
 
     def get_panel(self):
         return [
             [1, 'Plane Wizard', ''],
             [2, 'Reset', 'cmd.get_wizard().reset()'],
-            [2, 'Done', 'cmd.set_wizard()'],
+            # [2, 'Done', 'cmd.set_wizard()'],
         ]
+
+    def SetBondForceParam(self):
+        self.bondForceParams['r0'] = 0.5
+        self.bondForceParams['thA'] = 69.7
+        self.bondForceParams['thB'] = 48.1
+        self.bondForceParams['phiA'] = 132.2
+        self.bondForceParams['phiB'] = 123.2
+        self.bondForceParams['phiC'] = -12.3
+        self.bondForceParams['index_a'] = 1
+        self.bondForceParams['index_b'] = 2
+        self.bondForceParams['index_c'] = 3
+        self.bondForceParams['index_A'] = 4
+        self.bondForceParams['index_B'] = 5
+        self.bondForceParams['index_C'] = 6

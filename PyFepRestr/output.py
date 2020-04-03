@@ -5,7 +5,7 @@ from __future__ import print_function
 import math
 import tempfile
 import webbrowser
-from Tkinter import BooleanVar, Radiobutton, Label, Button, Tk
+from Tkinter import BooleanVar, Radiobutton, Label, Button
 from tkFileDialog import askopenfilename
 from tkMessageBox import showerror
 
@@ -60,46 +60,47 @@ class Output(object):
         self.dG_on_kCal = kJ_to_kCal(self.dG_on_kJ)
         self.topolFile = None
         self.main = main
+        self.main.title('PyFepRestr')
         self.r_var = BooleanVar()
         self.r_var.set(0)
-        self.rj1 = Radiobutton(text='kJ', variable=self.r_var, value=0, command=self.refresh)
-        self.rcal1 = Radiobutton(text="kCal", variable=self.r_var, value=1, command=self.refresh)
-        self.rj1.grid(row=0, column=0)
-        self.rcal1.grid(row=0, column=1)
+        self.rj1 = Radiobutton(main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
+        self.rcal1 = Radiobutton(main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
+        self.rj1.grid(row=0, column=0, padx=5, pady=5)
+        self.rcal1.grid(row=0, column=1, padx=5, pady=5)
 
         self.name0 = Label(main, text=u'\u0394G_off = ', font=15)
         self.name1 = Label(main, text=u'\u0394G_on = ', font=15)
-        self.name0.grid(row=1, column=0)
-        self.name1.grid(row=2, column=0)
+        self.name0.grid(row=1, column=0, padx=5, pady=5)
+        self.name1.grid(row=2, column=0, padx=5, pady=5)
 
         self.answer0 = Label(main, font=15)
         self.answer1 = Label(main, font=15)
         self.answer0['text'] = '{:>.3f}'.format(self.dG_off_kJ)
         self.answer1['text'] = '{:>.3f}'.format(self.dG_on_kJ)
-        self.answer0.grid(row=1, column=1)
-        self.answer1.grid(row=2, column=1)
+        self.answer0.grid(row=1, column=1, padx=5, pady=5)
+        self.answer1.grid(row=2, column=1, padx=5, pady=5)
 
         self.dimen0 = Label(main, font=15)
         self.dimen1 = Label(main, font=15)
         self.dimen0['text'] = 'kJ'
         self.dimen1['text'] = 'kJ'
-        self.dimen0.grid(row=1, column=2)
-        self.dimen1.grid(row=2, column=2)
+        self.dimen0.grid(row=1, column=2, padx=5, pady=5)
+        self.dimen1.grid(row=2, column=2, padx=5, pady=5)
 
         self.destroyProgr = Button(main, text='Exit', bg='red', command=main.destroy)
-        self.destroyProgr.grid(row=0, column=3)
+        self.destroyProgr.grid(row=0, column=3, padx=5, pady=5)
 
         self.helpProgr = Button(main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
-        self.helpProgr.grid(row=4, column=0)
+        self.helpProgr.grid(row=4, column=0, padx=5, pady=5)
 
         self.name0 = Label(main, text='Gromacs topology file:', font=15)
-        self.name0.grid(row=3, column=0)
+        self.name0.grid(row=3, column=0, padx=5, pady=5)
 
         self.openFileButton = Button(main, text='Select', bg='gray', command=self.selectFile)
-        self.openFileButton.grid(row=3, column=2)
+        self.openFileButton.grid(row=3, column=2, padx=5, pady=5)
 
         self.openFileButton = Button(main, text='Write', bg='green', command=self.writeTopolFile)
-        self.openFileButton.grid(row=3, column=3)
+        self.openFileButton.grid(row=3, column=3, padx=5, pady=5)
 
     def refresh(self):
 
@@ -171,20 +172,3 @@ class Output(object):
         print(restraints)
         with open(self.topolFile, 'at') as f:
             f.write(restraints)
-
-
-def main():
-    root = Tk()
-    bondForceParams = {'T': 300.0,
-                       'K_r': 4184.0, 'K_thA': 41.84, 'K_thB': 41.84,
-                       'K_phiA': 41.84, 'K_phiB': 41.84, 'K_phiC': 41.84,
-                       'r0': 0.50, 'thA': 69.7, 'thB': 48.1,
-                       'phiA': 132.2, 'phiB': 123.2, 'phiC': -12.3,
-                       'index_a': 1, 'index_b': 2, 'index_c': 3,
-                       'index_A': 4, 'index_B': 5, 'index_C': 6}
-    Output(root, bondForceParams)
-    root.mainloop()
-
-
-if __name__ == '__main__':
-    main()
