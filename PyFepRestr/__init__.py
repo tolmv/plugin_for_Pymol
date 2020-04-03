@@ -38,6 +38,7 @@ def main(parent):
     cmd.set_wizard(wiz)
     while wiz.iswait:
         sleep(1)
+    del wiz
     top = Toplevel(parent)
     Output(top, bondForceParams)
     top.grab_set()

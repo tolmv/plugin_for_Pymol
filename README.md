@@ -1,1 +1,2 @@
-# plugin_for_Pymol
+# PyFepRestr
+## Plug-in for PyMol molecular graphics system

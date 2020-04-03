@@ -97,7 +97,7 @@ class RestraintWizard(object, Wizard):
 
     def get_panel(self):
         return [
-            [1, 'Plane Wizard', ''],
+            [1, 'PyFepRestr', ''],
             [2, 'Reset', 'cmd.get_wizard().reset()'],
             # [2, 'Done', 'cmd.set_wizard()'],
         ]

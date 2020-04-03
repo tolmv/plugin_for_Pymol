@@ -25,10 +25,12 @@ class Restraints(object):
         self.main.title('PyFepRestr')
         self.main.protocol('WM_DELETE_WINDOW', self.exit)
         self.isexit = False
-        self.labels = ['Temp', 'K_r', u'K_\u03b8A',
-                       u'K_\u03b8B', u'K_\u03c6A', u'K_\u03c6B', u'K_\u03c6C']
+        self.labels = ['Temp',
+                       'K_r',
+                       u'K_\u03b8A', u'K_\u03b8B',
+                       u'K_\u03c6A', u'K_\u03c6B', u'K_\u03c6C']
         self.r_var = BooleanVar()
-        self.r_var.set(0)
+        self.r_var.set(1)
         self.rj1 = Radiobutton(main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
         self.rcal1 = Radiobutton(main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
         self.rj1.grid(row=0, column=0, padx=5, pady=5)
@@ -74,12 +76,7 @@ class Restraints(object):
             dimen.grid(row=i + 1, column=3, padx=5, pady=5)
 
         self.dimen_all[0]['text'] = 'Kelvin'
-        self.dimen_all[1]['text'] = u'kJ/mol/nm\u00b2'
-        self.dimen_all[2]['text'] = u'kJ/mol/rad\u00b2'
-        self.dimen_all[3]['text'] = u'kJ/mol/rad\u00b2'
-        self.dimen_all[4]['text'] = u'kJ/mol/rad\u00b2'
-        self.dimen_all[5]['text'] = u'kJ/mol/rad\u00b2'
-        self.dimen_all[6]['text'] = u'kJ/mol/rad\u00b2'
+        self.refresh()
 
         for i in range(len(self.label_all)):
             self.label_all[i]['text'] = self.labels[i]
@@ -104,14 +101,14 @@ class Restraints(object):
     def refresh(self):
 
         if self.r_var.get():
-            self.dimen_all[1].configure(text=u'kCal/mol/nm\u00b2')
+            self.dimen_all[1].configure(text=u'kCal/mol/\u212b\u00b2')
             self.dimen_all[2].configure(text=u'kCal/mol/rad\u00b2')
             self.dimen_all[3].configure(text=u'kCal/mol/rad\u00b2')
             self.dimen_all[4].configure(text=u'kCal/mol/rad\u00b2')
             self.dimen_all[5].configure(text=u'kCal/mol/rad\u00b2')
             self.dimen_all[6].configure(text=u'kCal/mol/rad\u00b2')
         else:
-            self.dimen_all[1].configure(text=u'kJ/mol/nm\u00b2')
+            self.dimen_all[1].configure(text=u'kJ/mol/\u212b\u00b2')
             self.dimen_all[2].configure(text=u'kJ/mol/rad\u00b2')
             self.dimen_all[3].configure(text=u'kJ/mol/rad\u00b2')
             self.dimen_all[4].configure(text=u'kJ/mol/rad\u00b2')
@@ -137,7 +134,7 @@ class Restraints(object):
             self.help = list((self.help[1],)) + list(map(kCal_to_kJ, self.help[1:]))
 
         self.bondForceParams['T'] = self.help[0]  # Temperature (K)
-        self.bondForceParams['K_r'] = self.help[1]  # force constant for distance (kJ/mol/nm^2)
+        self.bondForceParams['K_r'] = self.help[1] * 100  # force constant for distance (kJ/mol/nm^2)
         self.bondForceParams['K_thA'] = self.help[2]  # force constant for angle (kJ/mol/rad^2)
         self.bondForceParams['K_thB'] = self.help[3]  # force constant for angle (kJ/mol/rad^2)
         self.bondForceParams['K_phiA'] = self.help[4]  # force constant for dihedral (kJ/mol/rad^2)
