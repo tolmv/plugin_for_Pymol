@@ -4,12 +4,13 @@ from pymol.wizard import Wizard
 
 
 class RestraintWizard(object, Wizard):
-    def __init__(self):
+    def __init__(self, bondForceParams):
         Wizard.__init__(self)
-
+        self.bondForceParams = bondForceParams
         # some attributes to do with picking
         self.pick_count = 0
         self.object_prefix = "pw"
+        self.error = None
 
         self.selection_mode = cmd.get_setting_legacy("mouse_selection_mode")
         cmd.set("mouse_selection_mode", 0)  # set selection mode to atomic

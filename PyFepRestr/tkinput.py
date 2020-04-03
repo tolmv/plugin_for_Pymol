@@ -17,17 +17,18 @@ help_1 = """<html>
 def kCal_to_kJ(E):
     return E * 4.1868
 
+
 class Restraints(object):
-    def __init__(self, main):
+    def __init__(self, main, bondForceParams):
         self.help = []
         self.main = main
         self.isexit = False
-        self.labels = ['Temp', 'K_r', 'K_thA',
-                       'K_thB', 'K_phiA', 'K_phiB', 'K_phiC']
+        self.labels = ['Temp', 'K_r', u'K_\u03b8A',
+                       u'K_\u03b8B', u'K_\u03c6A', u'K_\u03c6B', u'K_\u03c6C']
         self.r_var = BooleanVar()
         self.r_var.set(0)
-        self.rj1 = Radiobutton(text='kJ', variable=self.r_var, value=0, command=self.refresh)
-        self.rcal1 = Radiobutton(text="kCal", variable=self.r_var, value=1, command=self.refresh)
+        self.rj1 = Radiobutton(main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
+        self.rcal1 = Radiobutton(main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
         self.rj1.grid(row=0, column=0)
         self.rcal1.grid(row=0, column=1)
 
@@ -73,12 +74,12 @@ class Restraints(object):
             self.dimen_all[i].grid(row=i + 1, column=3)
 
         self.dimen_all[0]['text'] = 'Kelvin'
-        self.dimen_all[1]['text'] = 'kJ/mol/nm^2'
-        self.dimen_all[2]['text'] = 'kJ/mol/rad^2'
-        self.dimen_all[3]['text'] = 'kJ/mol/rad^2'
-        self.dimen_all[4]['text'] = 'kJ/mol/rad^2'
-        self.dimen_all[5]['text'] = 'kJ/mol/rad^2'
-        self.dimen_all[6]['text'] = 'kJ/mol/rad^2'
+        self.dimen_all[1]['text'] = u'kJ/mol/nm\u00b2'
+        self.dimen_all[2]['text'] = u'kJ/mol/rad\u00b2'
+        self.dimen_all[3]['text'] = u'kJ/mol/rad\u00b2'
+        self.dimen_all[4]['text'] = u'kJ/mol/rad\u00b2'
+        self.dimen_all[5]['text'] = u'kJ/mol/rad\u00b2'
+        self.dimen_all[6]['text'] = u'kJ/mol/rad\u00b2'
 
         for i in range(len(self.label_all)):
             self.label_all[i]['text'] = self.labels[i]
@@ -86,7 +87,7 @@ class Restraints(object):
         self.entry_all_get = [self.entry0.get, self.entry1.get, self.entry2.get,
                               self.entry3.get, self.entry4.get,
                               self.entry5.get, self.entry6.get]
-
+        self.bondForceParams = bondForceParams
         self.button_res = Button(main, text="Next -> ", command=self.validate)
         self.button_res.grid(row=11, column=2)
 
@@ -103,19 +104,19 @@ class Restraints(object):
     def refresh(self):
 
         if self.r_var.get():
-            self.dimen_all[1].configure(text='kCal/mol/nm^2')
-            self.dimen_all[2].configure(text='kCal/mol/rad^2')
-            self.dimen_all[3].configure(text='kCal/mol/rad^2')
-            self.dimen_all[4].configure(text='kCal/mol/rad^2')
-            self.dimen_all[5].configure(text='kCal/mol/rad^2')
-            self.dimen_all[6].configure(text='kCal/mol/rad^2')
+            self.dimen_all[1].configure(text=u'kCal/mol/nm\u00b2')
+            self.dimen_all[2].configure(text=u'kCal/mol/rad\u00b2')
+            self.dimen_all[3].configure(text=u'kCal/mol/rad\u00b2')
+            self.dimen_all[4].configure(text=u'kCal/mol/rad\u00b2')
+            self.dimen_all[5].configure(text=u'kCal/mol/rad\u00b2')
+            self.dimen_all[6].configure(text=u'kCal/mol/rad\u00b2')
         else:
-            self.dimen_all[1].configure(text='kJ/mol/nm^2')
-            self.dimen_all[2].configure(text='kJ/mol/rad^2')
-            self.dimen_all[3].configure(text='kJ/mol/rad^2')
-            self.dimen_all[4].configure(text='kJ/mol/rad^2')
-            self.dimen_all[5].configure(text='kJ/mol/rad^2')
-            self.dimen_all[6].configure(text='kJ/mol/rad^2')
+            self.dimen_all[1].configure(text=u'kJ/mol/nm\u00b2')
+            self.dimen_all[2].configure(text=u'kJ/mol/rad\u00b2')
+            self.dimen_all[3].configure(text=u'kJ/mol/rad\u00b2')
+            self.dimen_all[4].configure(text=u'kJ/mol/rad\u00b2')
+            self.dimen_all[5].configure(text=u'kJ/mol/rad\u00b2')
+            self.dimen_all[6].configure(text=u'kJ/mol/rad\u00b2')
 
         for dimen in self.dimen_all:
             dimen.update()
@@ -135,31 +136,26 @@ class Restraints(object):
         if self.r_var.get():
             self.help = list((self.help[1],)) + list(map(kCal_to_kJ, self.help[1:]))
 
-        bondForceParams['T'] = self.help[0]  # Temperature (K)
-        bondForceParams['K_r'] = self.help[1]  # force constant for distance (kJ/mol/nm^2)
-        bondForceParams['K_thA'] = self.help[2]  # force constant for angle (kJ/mol/rad^2)
-        bondForceParams['K_thB'] = self.help[3]  # force constant for angle (kJ/mol/rad^2)
-        bondForceParams['K_phiA'] = self.help[4]  # force constant for dihedral (kJ/mol/rad^2)
-        bondForceParams['K_phiB'] = self.help[5]  # force constant for dihedral (kJ/mol/rad^2)
-        bondForceParams['K_phiC'] = self.help[6]  # force constant for dihedral (kJ/mol/rad^2)
+        self.bondForceParams['T'] = self.help[0]  # Temperature (K)
+        self.bondForceParams['K_r'] = self.help[1]  # force constant for distance (kJ/mol/nm^2)
+        self.bondForceParams['K_thA'] = self.help[2]  # force constant for angle (kJ/mol/rad^2)
+        self.bondForceParams['K_thB'] = self.help[3]  # force constant for angle (kJ/mol/rad^2)
+        self.bondForceParams['K_phiA'] = self.help[4]  # force constant for dihedral (kJ/mol/rad^2)
+        self.bondForceParams['K_phiB'] = self.help[5]  # force constant for dihedral (kJ/mol/rad^2)
+        self.bondForceParams['K_phiC'] = self.help[6]  # force constant for dihedral (kJ/mol/rad^2)
         showinfo('Info', 'Now choose the atoms you need')
         self.main.destroy()
 
-    def getHelp(self):
+    @staticmethod
+    def getHelp():
         with tempfile.NamedTemporaryFile('w', delete=False, suffix='.html') as f:
             url = "file://" + f.name
             f.write(help_1)
         webbrowser.open(url)
 
+
 def main():
     root = Tk()
-    app = Restraints(root)
-    root.mainloop()
-    print(bondForceParams)
-    print(app.isexit)
-
-
-if __name__ == '__main__':
     bondForceParams = {'T': None,
                        'K_r': None, 'K_thA': None, 'K_thB': None,
                        'K_phiA': None, 'K_phiB': None, 'K_phiC': None,
@@ -167,4 +163,11 @@ if __name__ == '__main__':
                        'phiA': None, 'phiB': None, 'phiC': None,
                        'index_a': None, 'index_b': None, 'index_c': None,
                        'index_A': None, 'index_B': None, 'index_C': None}
+    app = Restraints(root, bondForceParams)
+    root.mainloop()
+    print(bondForceParams)
+    print(app.isexit)
+
+
+if __name__ == '__main__':
     main()

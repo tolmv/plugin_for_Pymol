@@ -41,7 +41,8 @@ def calc_dG(T, r0, thA, thB, K_r, K_thA, K_thB, K_phiA, K_phiB, K_phiC):
 
 
 class Output(object):
-    def __init__(self, main):
+    def __init__(self, main, bondForceParams):
+        self.bondForceParams = bondForceParams
         self.dG_off_kJ = calc_dG(
             bondForceParams['T'],
             bondForceParams['r0'],
@@ -66,8 +67,8 @@ class Output(object):
         self.rj1.grid(row=0, column=0)
         self.rcal1.grid(row=0, column=1)
 
-        self.name0 = Label(main, text='dG_off = ', font=15)
-        self.name1 = Label(main, text='dG_on = ', font=15)
+        self.name0 = Label(main, text=u'\u0394G_off = ', font=15)
+        self.name1 = Label(main, text=u'\u0394G_on = ', font=15)
         self.name0.grid(row=1, column=0)
         self.name1.grid(row=2, column=0)
 
@@ -118,7 +119,8 @@ class Output(object):
         self.answer0.update()
         self.answer1.update()
 
-    def getHelp(self):
+    @staticmethod
+    def getHelp():
         with tempfile.NamedTemporaryFile('w', delete=False, suffix='.html') as f:
             url = "file://" + f.name
             f.write(help_2)
@@ -148,37 +150,31 @@ class Output(object):
                       " {14:d}   {12:d}   {13:d}   {15:d}   2        76.2    0.0        76.2    {10:.2f}\n"
                       " {12:d}   {13:d}   {15:d}   {17:d}   2        71.1    0.0        71.1    {11:.2f}\n"
                       ).format(
-            bondForceParams['r0'],  # 0
-            bondForceParams['thA'],  # 1
-            bondForceParams['thB'],  # 2
-            bondForceParams['phiA'],  # 3
-            bondForceParams['phiB'],  # 4
-            bondForceParams['phiC'],  # 5
-            bondForceParams['K_r'],  # 6
-            bondForceParams['K_thA'],  # 7
-            bondForceParams['K_thB'],  # 8
-            bondForceParams['K_phiA'],  # 9
-            bondForceParams['K_phiB'],  # 10
-            bondForceParams['K_phiC'],  # 11
-            bondForceParams['index_a'],  # 12
-            bondForceParams['index_A'],  # 13
-            bondForceParams['index_b'],  # 14
-            bondForceParams['index_B'],  # 15
-            bondForceParams['index_c'],  # 16
-            bondForceParams['index_C'])  # 17
+            self.bondForceParams['r0'],  # 0
+            self.bondForceParams['thA'],  # 1
+            self.bondForceParams['thB'],  # 2
+            self.bondForceParams['phiA'],  # 3
+            self.bondForceParams['phiB'],  # 4
+            self.bondForceParams['phiC'],  # 5
+            self.bondForceParams['K_r'],  # 6
+            self.bondForceParams['K_thA'],  # 7
+            self.bondForceParams['K_thB'],  # 8
+            self.bondForceParams['K_phiA'],  # 9
+            self.bondForceParams['K_phiB'],  # 10
+            self.bondForceParams['K_phiC'],  # 11
+            self.bondForceParams['index_a'],  # 12
+            self.bondForceParams['index_A'],  # 13
+            self.bondForceParams['index_b'],  # 14
+            self.bondForceParams['index_B'],  # 15
+            self.bondForceParams['index_c'],  # 16
+            self.bondForceParams['index_C'])  # 17
         print(restraints)
         with open(self.topolFile, 'at') as f:
             f.write(restraints)
 
 
-
 def main():
     root = Tk()
-    Output(root)
-    root.mainloop()
-
-
-if __name__ == '__main__':
     bondForceParams = {'T': 300.0,
                        'K_r': 4184.0, 'K_thA': 41.84, 'K_thB': 41.84,
                        'K_phiA': 41.84, 'K_phiB': 41.84, 'K_phiC': 41.84,
@@ -186,5 +182,9 @@ if __name__ == '__main__':
                        'phiA': 132.2, 'phiB': 123.2, 'phiC': -12.3,
                        'index_a': 1, 'index_b': 2, 'index_c': 3,
                        'index_A': 4, 'index_B': 5, 'index_C': 6}
+    Output(root, bondForceParams)
+    root.mainloop()
 
+
+if __name__ == '__main__':
     main()
