@@ -116,7 +116,7 @@ class RestraintWizard(object, Wizard):
         ]
 
     def SetBondForceParam(self, *args):
-        self.bondForceParams['r_aA'] = args[0]
+        self.bondForceParams['r_aA'] = args[0] / 10.0
         self.bondForceParams['th_a'] = args[1]
         self.bondForceParams['th_A'] = args[2]
         self.bondForceParams['phi_ba'] = args[3]
