@@ -20,10 +20,10 @@ def __init_plugin__(app):
 def main(parent):
     top = Toplevel(parent)
     bondForceParams = {'T': None,
-                       'K_r': None, 'K_thA': None, 'K_thB': None,
-                       'K_phiA': None, 'K_phiB': None, 'K_phiC': None,
-                       'r0': None, 'thA': None, 'thB': None,
-                       'phiA': None, 'phiB': None, 'phiC': None,
+                       'K_r_aA': None, 'K_th_a': None, 'K_th_A': None,
+                       'K_phi_ba': None, 'K_phi_aA': None, 'K_phi_AB': None,
+                       'r_aA': None, 'th_a': None, 'th_A': None,
+                       'phi_ba': None, 'phi_aA': None, 'phi_AB': None,
                        'index_a': None, 'index_b': None, 'index_c': None,
                        'index_A': None, 'index_B': None, 'index_C': None}
     restr = Restraints(top, bondForceParams)

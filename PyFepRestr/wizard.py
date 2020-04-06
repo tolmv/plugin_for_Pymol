@@ -89,9 +89,22 @@ class RestraintWizard(object, Wizard):
             # point1 = cmd.get_atom_coords("(%s%s)" % (self.object_prefix, "0"))
             # point2 = cmd.get_atom_coords("(%s%s)" % (self.object_prefix, "1"))
             # point3 = cmd.get_atom_coords("(%s%s)" % (self.object_prefix, "2"))
+            r_aA = cmd.get_distance(atom1="pw2", atom2="pw3", state=0)
+            th_a = cmd.get_angle(atom1="pw1", atom2="pw2", atom3="pw3", state=0)
+            th_A = cmd.get_angle(atom1="pw2", atom2="pw3", atom3="pw4", state=0)
+            phi_ba = cmd.get_dihedral(atom1="pw0", atom2="pw1", atom3="pw2", atom4="pw3", state=0)
+            phi_aA = cmd.get_dihedral(atom1="pw1", atom2="pw2", atom3="pw3", atom4="pw4", state=0)
+            phi_AB = cmd.get_dihedral(atom1="pw2", atom2="pw3", atom3="pw4", atom4="pw5", state=0)
+            index_c = cmd.id_atom("pw0")
+            index_b = cmd.id_atom("pw1")
+            index_a = cmd.id_atom("pw2")
+            index_A = cmd.id_atom("pw3")
+            index_B = cmd.id_atom("pw4")
+            index_C = cmd.id_atom("pw5")
             self.pick_count = 0
             self.reset()
-            self.SetBondForceParam()
+            self.SetBondForceParam(r_aA, th_a, th_A, phi_ba, phi_aA, phi_AB,
+                                   index_c, index_b, index_a, index_A, index_B, index_C)
             cmd.set_wizard()
             self.iswait = False
 
@@ -102,16 +115,16 @@ class RestraintWizard(object, Wizard):
             # [2, 'Done', 'cmd.set_wizard()'],
         ]
 
-    def SetBondForceParam(self):
-        self.bondForceParams['r0'] = 0.5
-        self.bondForceParams['thA'] = 69.7
-        self.bondForceParams['thB'] = 48.1
-        self.bondForceParams['phiA'] = 132.2
-        self.bondForceParams['phiB'] = 123.2
-        self.bondForceParams['phiC'] = -12.3
-        self.bondForceParams['index_a'] = 1
-        self.bondForceParams['index_b'] = 2
-        self.bondForceParams['index_c'] = 3
-        self.bondForceParams['index_A'] = 4
-        self.bondForceParams['index_B'] = 5
-        self.bondForceParams['index_C'] = 6
+    def SetBondForceParam(self, *args):
+        self.bondForceParams['r_aA'] = args[0]
+        self.bondForceParams['th_a'] = args[1]
+        self.bondForceParams['th_A'] = args[2]
+        self.bondForceParams['phi_ba'] = args[3]
+        self.bondForceParams['phi_aA'] = args[4]
+        self.bondForceParams['phi_AB'] = args[5]
+        self.bondForceParams['index_a'] = args[8]
+        self.bondForceParams['index_b'] = args[7]
+        self.bondForceParams['index_c'] = args[6]
+        self.bondForceParams['index_A'] = args[9]
+        self.bondForceParams['index_B'] = args[10]
+        self.bondForceParams['index_C'] = args[11]

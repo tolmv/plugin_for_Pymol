@@ -26,9 +26,9 @@ class Restraints(object):
         self.main.protocol('WM_DELETE_WINDOW', self.exit)
         self.isexit = False
         self.labels = ['Temp',
-                       'K_r',
-                       u'K_\u03b8A', u'K_\u03b8B',
-                       u'K_\u03c6A', u'K_\u03c6B', u'K_\u03c6C']
+                       'K raA',
+                       u'K \u03b8a', u'K \u03b8A',
+                       u'K \u03c6ba', u'K \u03c6aA', u'K_\u03c6AB']
         self.r_var = BooleanVar()
         self.r_var.set(1)
         self.rj1 = Radiobutton(main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
@@ -131,15 +131,16 @@ class Restraints(object):
             self.help.append(f)
 
         if self.r_var.get():
-            self.help = list((self.help[1],)) + list(map(kCal_to_kJ, self.help[1:]))
+            self.help = list((self.help[0],)) + list(map(kCal_to_kJ, self.help[1:]))
 
         self.bondForceParams['T'] = self.help[0]  # Temperature (K)
-        self.bondForceParams['K_r'] = self.help[1] * 100  # force constant for distance (kJ/mol/nm^2)
-        self.bondForceParams['K_thA'] = self.help[2]  # force constant for angle (kJ/mol/rad^2)
-        self.bondForceParams['K_thB'] = self.help[3]  # force constant for angle (kJ/mol/rad^2)
-        self.bondForceParams['K_phiA'] = self.help[4]  # force constant for dihedral (kJ/mol/rad^2)
-        self.bondForceParams['K_phiB'] = self.help[5]  # force constant for dihedral (kJ/mol/rad^2)
-        self.bondForceParams['K_phiC'] = self.help[6]  # force constant for dihedral (kJ/mol/rad^2)
+        self.bondForceParams['K_r_aA'] = self.help[1] * 100  # force constant for distance (kJ/mol/nm^2)
+        self.bondForceParams['K_th_a'] = self.help[2]  # force constant for angle (kJ/mol/rad^2)
+        self.bondForceParams['K_th_A'] = self.help[3]  # force constant for angle (kJ/mol/rad^2)
+        self.bondForceParams['K_phi_ba'] = self.help[4]  # force constant for dihedral (kJ/mol/rad^2)
+        self.bondForceParams['K_phi_aA'] = self.help[5]  # force constant for dihedral (kJ/mol/rad^2)
+        self.bondForceParams['K_phi_AB'] = self.help[6]  # force constant for dihedral (kJ/mol/rad^2)
+        print(self.bondForceParams)
         showinfo('Info', 'Now choose the atoms you need')
         self.main.destroy()
 

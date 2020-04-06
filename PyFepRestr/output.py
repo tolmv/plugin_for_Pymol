@@ -32,7 +32,7 @@ def calc_dG(T, r0, thA, thB, K_r, K_thA, K_thB, K_phiA, K_phiB, K_phiC):
             (8.0 * math.pi ** 2.0 * V) / (r0 ** 2.0 * math.sin(thA) * math.sin(thB))
             *
             (
-                    ((K_r * K_thA * K_thB * K_phiA * K_phiB * K_phiC) ** 0.5) / ((2.0 * math.pi * R * T) ** 3.0)
+                    ((K_r * K_thA * K_thB * K_phiA * K_phiB * K_phiC) ** 0.5) / ((2.0 * math.pi * R * T) ** (3.0))
             )
     )
 
@@ -45,15 +45,15 @@ class Output(object):
         self.bondForceParams = bondForceParams
         self.dG_off_kJ = calc_dG(
             bondForceParams['T'],
-            bondForceParams['r0'],
-            bondForceParams['thA'],
-            bondForceParams['thB'],
-            bondForceParams['K_r'],
-            bondForceParams['K_thA'],
-            bondForceParams['K_thB'],
-            bondForceParams['K_phiA'],
-            bondForceParams['K_phiB'],
-            bondForceParams['K_phiC']
+            bondForceParams['r_aA'],
+            bondForceParams['th_a'],
+            bondForceParams['th_A'],
+            bondForceParams['K_r_aA'],
+            bondForceParams['K_th_a'],
+            bondForceParams['K_th_A'],
+            bondForceParams['K_phi_ba'],
+            bondForceParams['K_phi_aA'],
+            bondForceParams['K_phi_AB']
         )
         self.dG_on_kJ = -self.dG_off_kJ
         self.dG_off_kCal = kJ_to_kCal(self.dG_off_kJ)
@@ -82,8 +82,7 @@ class Output(object):
 
         self.dimen0 = Label(main, font=15)
         self.dimen1 = Label(main, font=15)
-        self.dimen0['text'] = 'kJ'
-        self.dimen1['text'] = 'kJ'
+        self.refresh()
         self.dimen0.grid(row=1, column=2, padx=5, pady=5)
         self.dimen1.grid(row=2, column=2, padx=5, pady=5)
 
@@ -105,13 +104,13 @@ class Output(object):
     def refresh(self):
 
         if self.r_var.get():
-            self.dimen0.configure(text='kCal')
-            self.dimen1.configure(text='kCal')
+            self.dimen0.configure(text='kCal/mol')
+            self.dimen1.configure(text='kCal/mol')
             self.answer0.configure(text='{:>.3f}'.format(self.dG_off_kCal))
             self.answer1.configure(text='{:>.3f}'.format(self.dG_on_kCal))
         else:
-            self.dimen0.configure(text='kJ')
-            self.dimen1.configure(text='kJ')
+            self.dimen0.configure(text='kJ/mol')
+            self.dimen1.configure(text='kJ/mol')
             self.answer0.configure(text='{:>.3f}'.format(self.dG_off_kJ))
             self.answer1.configure(text='{:>.3f}'.format(self.dG_on_kJ))
 
@@ -151,18 +150,18 @@ class Output(object):
                       " {14:d}   {12:d}   {13:d}   {15:d}   2        76.2    0.0        76.2    {10:.2f}\n"
                       " {12:d}   {13:d}   {15:d}   {17:d}   2        71.1    0.0        71.1    {11:.2f}\n"
                       ).format(
-            self.bondForceParams['r0'],  # 0
-            self.bondForceParams['thA'],  # 1
-            self.bondForceParams['thB'],  # 2
-            self.bondForceParams['phiA'],  # 3
-            self.bondForceParams['phiB'],  # 4
-            self.bondForceParams['phiC'],  # 5
-            self.bondForceParams['K_r'],  # 6
-            self.bondForceParams['K_thA'],  # 7
-            self.bondForceParams['K_thB'],  # 8
-            self.bondForceParams['K_phiA'],  # 9
-            self.bondForceParams['K_phiB'],  # 10
-            self.bondForceParams['K_phiC'],  # 11
+            self.bondForceParams['r_aA'],  # 0
+            self.bondForceParams['th_a'],  # 1
+            self.bondForceParams['th_A'],  # 2
+            self.bondForceParams['phi_ba'],  # 3
+            self.bondForceParams['phi_aA'],  # 4
+            self.bondForceParams['phi_AB'],  # 5
+            self.bondForceParams['K_r_aA'],  # 6
+            self.bondForceParams['K_th_a'],  # 7
+            self.bondForceParams['K_th_A'],  # 8
+            self.bondForceParams['K_phi_ba'],  # 9
+            self.bondForceParams['K_phi_aA'],  # 10
+            self.bondForceParams['K_phi_AB'],  # 11
             self.bondForceParams['index_a'],  # 12
             self.bondForceParams['index_A'],  # 13
             self.bondForceParams['index_b'],  # 14
