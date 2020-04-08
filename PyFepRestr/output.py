@@ -14,7 +14,41 @@ V = 1.66  # standard volume in nm^3
 
 help_2 = """<html>
 <title>Help</title>
-<body>Help</body>
+<h1 align="left" style="color: Black">QuickStart</h1>
+
+<h2 align="left" style="color: Black"> Gromacs topology</h2>
+
+<h3 align="left" style="color: Black"> Select</h4>
+
+<body>
+Select the topology file that you need.
+</body>
+
+<h3 align="left" style="color: Black"> Write</h4>
+
+<body>
+This button writes all the indices of the atoms, <br>
+force constants, distances, angles and dihedral angles in your topology file,<br>
+where A is &lambda;<sub>restr</sub> =  0 and B is &lambda;<sub>restr</sub> =  1. <br>
+The bonded-lambdas vector was interpolated <br>
+between the force constant (and equilibrium posi- tions) in state A and B.
+</body>
+
+<h2 align="left" style="color: Black">Unit Button (kJ or kCal)</h2>
+
+<body>
+You can choose the desired unit of measurement,<br>
+depending on what you need to output.</body>
+<h2 align="left" style="color: Black">Exit</h2>
+<body>
+Exit the program.
+</body>
+<h2 align="left" style="color: Black">Free Energy</h2>
+<body>
+Here you can see value of &Delta;G.<br>
+If you need some more info, see documentation.
+</body>
+
 </html>
 """
 
