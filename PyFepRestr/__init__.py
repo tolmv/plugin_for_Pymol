@@ -31,17 +31,23 @@ def main(parent):
     top.focus_set()
     top.wait_window()
     if restr.isexit:
-        del top
         return
+    del restr
     del top
-    wiz = RestraintWizard(bondForceParams)
+    atoms_def = {
+        'index_c': None,
+        'index_b': None,
+        'index_a': None,
+        'index_A': None,
+        'index_B': None,
+        'index_C': None
+    }
+    wiz = RestraintWizard(bondForceParams, atoms_def)
     cmd.set_wizard(wiz)
     while wiz.iswait:
         sleep(1)
-    del wiz
     top = Toplevel(parent)
     Output(top, bondForceParams)
     top.grab_set()
     top.focus_set()
     top.wait_window()
-    del top

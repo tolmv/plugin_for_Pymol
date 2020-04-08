@@ -9,7 +9,11 @@ from tkMessageBox import showinfo
 
 help_1 = """<html>
 <title>Help</title>
-<body>Help</body>
+<body>K are the force constants of the harmonic restraints for the one distance (raA),<br>
+ two angle (θa and θA), and three dihedral (φba, φaA, and φAB) restraints.<br>
+ The value is in the range of 5-50 kCal/mol/rad<sup>2</sup> (or kCal/mol/Å<sup>2</sup> are acceptable.<br>
+ Recommended value is 10 kCal/mol/rad<sup>2</sup> (or kCal/mol/Å<sup>2</sup>.<br>
+ </body>
 </html>
 """
 
@@ -140,8 +144,8 @@ class Restraints(object):
         self.bondForceParams['K_phi_ba'] = self.help[4]  # force constant for dihedral (kJ/mol/rad^2)
         self.bondForceParams['K_phi_aA'] = self.help[5]  # force constant for dihedral (kJ/mol/rad^2)
         self.bondForceParams['K_phi_AB'] = self.help[6]  # force constant for dihedral (kJ/mol/rad^2)
-        print(self.bondForceParams)
         showinfo('Info', 'Now choose the atoms you need')
+        self.main.withdraw()
         self.main.destroy()
 
     @staticmethod
