@@ -4,17 +4,37 @@ from __future__ import print_function
 
 import tempfile
 import webbrowser
-from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button
-from tkMessageBox import showinfo
+
+try:
+    from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button
+    from tkMessageBox import showinfo
+except ImportError:
+    from tkinter import BooleanVar, Radiobutton, Entry, Label, Button
+    from tkinter.messagebox import showinfo
 
 help_1 = """<html>
 <title>Help</title>
-<body>K are the force constants of the harmonic restraints for the one distance (raA),<br>
- two angle (θa and θA), and three dihedral (φba, φaA, and φAB) restraints.<br>
+<h1 align="left" style="color: Black">QuickStart</h1>
+<h2 align="left" style="color: Black">Unit Button (kJ or kCal)</h2>
+
+<body>
+You can choose the desired unit of measurement.</body>
+
+<h2 align="left" style="color: Black">Exit</h2>
+<body>
+Exit the program.
+</body>
+
+<h2 align="left" style="color: Black"> Text Fields</h2>
+
+<body>
+ K are the force constants of the harmonic restraints for the one distance (raA),<br>
+ two angle (θa and θA), and three dihedral (φba, φaA, and φAB) restraints. Temp and K values must be > 0.<br>
  The value is in the range of 5-50 kCal/mol/rad<sup>2</sup> (or kCal/mol/Å<sup>2</sup> are acceptable.<br>
  Recommended value is 10 kCal/mol/rad<sup>2</sup> (or kCal/mol/Å<sup>2</sup>.<br>
  </body>
 </html>
+
 """
 
 

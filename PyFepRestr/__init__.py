@@ -1,8 +1,10 @@
 # coding=utf-8
 from __future__ import absolute_import
 from __future__ import print_function
-
-from Tkinter import Toplevel
+try:
+    from Tkinter import Toplevel
+except ImportError:
+    from tkinter import Toplevel
 from pymol import cmd
 from time import sleep
 
@@ -47,7 +49,7 @@ def main(parent):
     while wiz.iswait:
         sleep(1)
     top = Toplevel(parent)
-    Output(top, bondForceParams)
+    Output(top, bondForceParams, atoms_def)
     top.grab_set()
     top.focus_set()
     top.wait_window()

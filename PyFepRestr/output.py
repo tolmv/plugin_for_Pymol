@@ -5,9 +5,17 @@ from __future__ import print_function
 import math
 import tempfile
 import webbrowser
-from Tkinter import BooleanVar, Radiobutton, Label, Button
-from tkFileDialog import askopenfilename
-from tkMessageBox import showerror
+
+try:
+    from Tkinter import BooleanVar, Radiobutton, Label, Button, Frame, Text, Scrollbar, W, END, WORD, Y, LEFT, RIGHT, \
+        Toplevel
+    from tkFileDialog import askopenfilename
+    from tkMessageBox import showerror
+except ImportError:
+    from tkinter import BooleanVar, Radiobutton, Label, Button, Frame, Text, Scrollbar, W, END, WORD, Y, LEFT, RIGHT, \
+        Toplevel
+    from tkinter.filedialog import askopenfilename
+    from tkinter.messagebox import askyesno, showerror
 
 R = 8.314472 * 0.001  # Gas constant in kJ/mol/K
 V = 1.66  # standard volume in nm^3
@@ -18,17 +26,17 @@ help_2 = """<html>
 
 <h2 align="left" style="color: Black"> Gromacs topology</h2>
 
-<h3 align="left" style="color: Black"> Select</h4>
+<h3 align="left" style="color: Black"> Preview</h4>
 
 <body>
-Select the topology file that you need.
+Preview an additional section in the topology file.
 </body>
 
 <h3 align="left" style="color: Black"> Write</h4>
 
 <body>
-This button writes all the indices of the atoms, <br>
-force constants, distances, angles and dihedral angles in your topology file,<br>
+Select the topology file and writes all the indices of the atoms, <br>
+force constants, distances, angles and dihedral angles into it,<br>
 where A is &lambda;<sub>restr</sub> =  0 and B is &lambda;<sub>restr</sub> =  1. <br>
 The bonded-lambdas vector was interpolated <br>
 between the force constant (and equilibrium posi- tions) in state A and B.
@@ -66,7 +74,7 @@ def calc_dG(T, r0, thA, thB, K_r, K_thA, K_thB, K_phiA, K_phiB, K_phiC):
             (8.0 * math.pi ** 2.0 * V) / (r0 ** 2.0 * math.sin(thA) * math.sin(thB))
             *
             (
-                    ((K_r * K_thA * K_thB * K_phiA * K_phiB * K_phiC) ** 0.5) / ((2.0 * math.pi * R * T) ** (3.0))
+                    ((K_r * K_thA * K_thB * K_phiA * K_phiB * K_phiC) ** 0.5) / ((2.0 * math.pi * R * T) ** 3.0)
             )
     )
 
@@ -75,7 +83,7 @@ def calc_dG(T, r0, thA, thB, K_r, K_thA, K_thB, K_phiA, K_phiB, K_phiC):
 
 
 class Output(object):
-    def __init__(self, main, bondForceParams):
+    def __init__(self, main, bondForceParams, atoms_def):
         self.bondForceParams = bondForceParams
         self.dG_off_kJ = calc_dG(
             bondForceParams['T'],
@@ -92,20 +100,21 @@ class Output(object):
         self.dG_on_kJ = -self.dG_off_kJ
         self.dG_off_kCal = kJ_to_kCal(self.dG_off_kJ)
         self.dG_on_kCal = kJ_to_kCal(self.dG_on_kJ)
+        self.atoms_def = atoms_def
         self.topolFile = None
         self.main = main
         self.main.title('PyFepRestr')
         self.r_var = BooleanVar()
         self.r_var.set(0)
-        self.rj1 = Radiobutton(main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
-        self.rcal1 = Radiobutton(main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
-        self.rj1.grid(row=0, column=0, padx=5, pady=5)
-        self.rcal1.grid(row=0, column=1, padx=5, pady=5)
+        rj1 = Radiobutton(main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
+        rcal1 = Radiobutton(main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
+        rj1.grid(row=0, column=0, padx=5, pady=5)
+        rcal1.grid(row=0, column=1, padx=5, pady=5)
 
-        self.name0 = Label(main, text=u'\u0394G_off = ', font=15)
-        self.name1 = Label(main, text=u'\u0394G_on = ', font=15)
-        self.name0.grid(row=1, column=0, padx=5, pady=5)
-        self.name1.grid(row=2, column=0, padx=5, pady=5)
+        name0 = Label(main, text=u'\u0394G_off = ', font=15)
+        name1 = Label(main, text=u'\u0394G_on = ', font=15)
+        name0.grid(row=1, column=0, padx=5, pady=5)
+        name1.grid(row=2, column=0, padx=5, pady=5)
 
         self.answer0 = Label(main, font=15)
         self.answer1 = Label(main, font=15)
@@ -120,23 +129,24 @@ class Output(object):
         self.dimen0.grid(row=1, column=2, padx=5, pady=5)
         self.dimen1.grid(row=2, column=2, padx=5, pady=5)
 
-        self.destroyProgr = Button(main, text='Exit', bg='red', command=main.destroy)
-        self.destroyProgr.grid(row=0, column=3, padx=5, pady=5)
+        self.tx = None
 
-        self.helpProgr = Button(main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
-        self.helpProgr.grid(row=4, column=0, padx=5, pady=5)
+        destroyProgr = Button(main, text='Exit', bg='red', command=main.destroy)
+        destroyProgr.grid(row=0, column=3, padx=5, pady=5)
 
-        self.name0 = Label(main, text='Gromacs topology file:', font=15)
-        self.name0.grid(row=3, column=0, padx=5, pady=5)
+        helpProgr = Button(main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
+        helpProgr.grid(row=4, column=0, padx=5, pady=5)
 
-        self.openFileButton = Button(main, text='Select', bg='gray', command=self.selectFile)
-        self.openFileButton.grid(row=3, column=2, padx=5, pady=5)
+        name0 = Label(main, text='Gromacs topology file:', font=15)
+        name0.grid(row=3, column=0, padx=5, pady=5)
 
-        self.openFileButton = Button(main, text='Write', bg='green', command=self.writeTopolFile)
-        self.openFileButton.grid(row=3, column=3, padx=5, pady=5)
+        previewButton = Button(main, text='Preview', bg='gray', command=self.ViewGromacsTopol)
+        previewButton.grid(row=3, column=2, padx=5, pady=5)
+
+        saveFileButton = Button(main, text='Save', bg='gray', command=self.writeTopolFile)
+        saveFileButton.grid(row=3, column=3, padx=5, pady=5)
 
     def refresh(self):
-
         if self.r_var.get():
             self.dimen0.configure(text='kCal/mol')
             self.dimen1.configure(text='kCal/mol')
@@ -160,29 +170,85 @@ class Output(object):
             f.write(help_2)
         webbrowser.open(url)
 
-    def selectFile(self):
-        self.topolFile = askopenfilename(initialdir="/", title="Select file",
-                                         filetypes=(("Topology files", "*.top"), ("all files", "*.*")))
+    def ViewGromacsTopol(self):
+        top = Toplevel(self.main)
+        fra = Frame(top)
+        fra.grid(row=0, column=0, pady=5, padx=5)
+        self.tx = Text(fra, width=130, height=30, wrap=WORD)
+        scr = Scrollbar(fra, command=self.tx.yview)
+        self.tx.configure(yscrollcommand=scr.set, state='disabled')
+        self.tx.pack(side=LEFT)
+        scr.pack(side=RIGHT, fill=Y)
+        self.tx.bind('<Enter>', lambda e: self._bound_to_mousewheel(e, self.tx))
+        self.tx.bind('<Leave>', self._unbound_to_mousewheel)
+        closeTopolPrevB = Button(top, text='Exit', bg='red', command=top.destroy)
+        closeTopolPrevB.grid(row=1, column=0, pady=5)
+        restraints = self.createGronacsRestr()
+        self._clean_txt()
+        self.tx.configure(state='normal')
+        self.tx.insert(END, restraints)
+        self.tx.configure(state='disabled')
+
+    def _bound_to_mousewheel(self, event, tx):
+        _ = event
+        self.tx.bind_all('<MouseWheel>', lambda e: self._on_mousewheel(e, tx))
+        self.tx.bind_all('<Button-4>', lambda e: self._on_mousewheel(e, tx))
+        self.tx.bind_all('<Button-5>', lambda e: self._on_mousewheel(e, tx))
+        self.tx.bind_all('<Up>', lambda e: self._on_mousewheel(e, tx))
+        self.tx.bind_all('<Down>', lambda e: self._on_mousewheel(e, tx))
+
+    def _unbound_to_mousewheel(self, event):
+        _ = event
+        self.tx.unbind_all('<MouseWheel>')
+        self.tx.unbind_all('<Button-4>')
+        self.tx.unbind_all('<Button-5>')
+        self.tx.unbind_all('<Up>')
+        self.tx.unbind_all('<Down>')
+
+    @staticmethod
+    def _on_mousewheel(event, tx):
+        if event.num == 4 or event.keysym == 'Up':
+            tx.yview_scroll(-1, 'units')
+        elif event.num == 5 or event.keysym == 'Down':
+            tx.yview_scroll(1, 'units')
+        else:
+            tx.yview_scroll(int(-1 * (event.delta / 120)), 'units')
+
+    def _clean_txt(self):
+        self.tx.configure(state='normal')
+        self.tx.delete('1.0', END)
+        self.tx.see(END)
+        self.tx.configure(state='disabled')
 
     def writeTopolFile(self):
-        if self.topolFile is None:
-            showerror("Error", "Topology file is not selected")
+        topolFile = askopenfilename(initialdir="/", title="Select file",
+                                    filetypes=(("Topology files", "*.top"), ("all files", "*.*")))
+        if topolFile is None:
+            showerror("Error", "Topology file is not selected!")
             return
-        restraints = ("\n\n[ intermolecular_interactions ]\n"
+        restraints = self.createGronacsRestr()
+        with open(topolFile, 'at') as f:
+            f.write("\n\n" + restraints)
+
+    def createGronacsRestr(self):
+        restraints = ("[ intermolecular_interactions ]\n"
                       "[ bonds ]\n"
                       "; ai     aj    type   bA      kA     bB      kB\n"
-                      " {12:d}    {13:d}  6      {0:.3f}     0.0    {0:.3f}   {6:.1f}\n"
+                      " {12:d}    {13:d}  6      {0:.3f}     0.0    {0:.3f}   {6:.1f} ; {20:s} - {21:s}\n"
                       " \n"
                       "[ angles ]\n"
                       "; ai     aj    ak     type    thA      fcA        thB      fcB\n"
-                      " {14:d}   {12:d}   {13:d}   1       {1:.2f}     0.0        {1:.2f}    {7:.2f}\n"
-                      " {12:d}   {13:d}   {15:d}   1       {2:.2f}     0.0        {2:.2f}    {8:.2f}\n"
+                      " {14:d}   {12:d}   {13:d}   1       {1:.2f}     0.0        {1:.2f}    {7:.2f} ; {19:s} - {20:s} - {21:s}\n"
+                      " {12:d}   {13:d}   {15:d}   1       {2:.2f}     0.0        {2:.2f}    {8:.2f} ; {20:s} - {21:s} - {22:s}\n"
                       "\n"
                       "[ dihedrals ]\n"
                       "; ai     aj    ak    al    type     thA      fcA       thB      fcB\n"
-                      " {16:d}   {14:d}   {12:d}   {13:d}   2       149.2    0.0       149.2    {9:.2f}\n"
-                      " {14:d}   {12:d}   {13:d}   {15:d}   2        76.2    0.0        76.2    {10:.2f}\n"
-                      " {12:d}   {13:d}   {15:d}   {17:d}   2        71.1    0.0        71.1    {11:.2f}\n"
+                      " {16:d}   {14:d}   {12:d}   {13:d}   2     {3:.2f}    0.0     {3:.2f}     {9:.2f} ; {18:s} - {19:s} - {20:s} - {21:s}\n"
+                      " {14:d}   {12:d}   {13:d}   {15:d}   2     {4:.2f}    0.0     {4:.2f}    {10:.2f} ; {19:s} - {20:s} - {21:s} - {22:s}\n"
+                      " {12:d}   {13:d}   {15:d}   {17:d}   2     {5:.2f}    0.0     {5:.2f}    {11:.2f} ; {20:s} - {21:s} - {22:s} - {23:s}\n"
+                      "; T = {24:.1f} K\n"
+                      "; dG_off = {25:.3f} kJ/mol ({27:.3f} kCal/mol)\n"
+                      "; dG_on = {26:.3f} kJ/mol ({28:.3f} kCal/mol)\n"
                       ).format(
             self.bondForceParams['r_aA'],  # 0
             self.bondForceParams['th_a'],  # 1
@@ -201,7 +267,17 @@ class Output(object):
             self.bondForceParams['index_b'],  # 14
             self.bondForceParams['index_B'],  # 15
             self.bondForceParams['index_c'],  # 16
-            self.bondForceParams['index_C'])  # 17
-        print(restraints)
-        with open(self.topolFile, 'at') as f:
-            f.write(restraints)
+            self.bondForceParams['index_C'],  # 17
+            self.atoms_def['index_c'],  # 18
+            self.atoms_def['index_b'],  # 19
+            self.atoms_def['index_a'],  # 20
+            self.atoms_def['index_A'],  # 21
+            self.atoms_def['index_B'],  # 22
+            self.atoms_def['index_C'],  # 23
+            self.bondForceParams['T'],  # 24
+            self.dG_off_kJ,  # 25
+            self.dG_on_kJ,  # 26
+            self.dG_off_kCal,  # 27
+            self.dG_on_kCal  # 28
+        )
+        return restraints

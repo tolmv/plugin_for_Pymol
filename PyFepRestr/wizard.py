@@ -49,17 +49,17 @@ class RestraintWizard(object, Wizard):
     def get_prompt(self):
         self.prompt = None
         if self.pick_count == 0:
-            self.prompt = ['Please click on the first atom...']
+            self.prompt = ['Please click on the first (c) atom...']
         elif self.pick_count == 1:
-            self.prompt = ['Please click on the second atom...']
+            self.prompt = ['Please click on the second (b) atom...']
         elif self.pick_count == 2:
-            self.prompt = ['Please click on the third atom...']
+            self.prompt = ['Please click on the third (a) atom...']
         elif self.pick_count == 3:
-            self.prompt = ['Please click on the fourth atom...']
+            self.prompt = ['Please click on the fourth (A) atom...']
         elif self.pick_count == 4:
-            self.prompt = ['Please click on the fifth atom...']
+            self.prompt = ['Please click on the fifth (B) atom...']
         elif self.pick_count == 5:
-            self.prompt = ['Please click on the sixth atom...']
+            self.prompt = ['Please click on the sixth (C) atom...']
         return self.prompt
 
     def do_select(self, name):
@@ -67,7 +67,7 @@ class RestraintWizard(object, Wizard):
         try:
             cmd.edit("%s and not %s*" % (name, self.object_prefix))
             self.do_pick(0)
-        except CmdException, pmce:
+        except CmdException as pmce:
             print(pmce)
 
     def pickNextAtom(self, atom_name):
@@ -139,7 +139,6 @@ class RestraintWizard(object, Wizard):
         return [
             [1, 'PyFepRestr', ''],
             [2, 'Reset', 'cmd.get_wizard().reset()'],
-            # [2, 'Done', 'cmd.set_wizard()'],
         ]
 
     def setAtomsDef(self, *args):
