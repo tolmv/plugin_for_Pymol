@@ -14,7 +14,7 @@ def getAtomString(sel):
     return s
 
 
-class RestraintWizard(object, Wizard):
+class RestraintWizard(Wizard):
     def __init__(self, bondForceParams, atoms_def):
         Wizard.__init__(self)
         self.atoms_def = atoms_def
