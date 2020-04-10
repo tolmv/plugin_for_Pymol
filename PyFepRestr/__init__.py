@@ -1,12 +1,11 @@
 # coding=utf-8
 from __future__ import absolute_import
 from __future__ import print_function
+
 try:
     from Tkinter import Toplevel
 except ImportError:
     from tkinter import Toplevel
-from pymol import cmd
-from time import sleep
 
 from .output import Output
 from .tkinput import Restraints
@@ -28,27 +27,7 @@ def main(parent):
                        'phi_ba': None, 'phi_aA': None, 'phi_AB': None,
                        'index_a': None, 'index_b': None, 'index_c': None,
                        'index_A': None, 'index_B': None, 'index_C': None}
-    restr = Restraints(top, bondForceParams)
-    top.grab_set()
-    top.focus_set()
-    top.wait_window()
-    if restr.isexit:
-        return
-    atoms_def = {
-        'index_c': None,
-        'index_b': None,
-        'index_a': None,
-        'index_A': None,
-        'index_B': None,
-        'index_C': None
-    }
-    wiz = RestraintWizard(bondForceParams, atoms_def)
-    cmd.set_wizard(wiz)
-    cmd.refresh_wizard()
-    while wiz.iswait:
-        sleep(1)
-    top = Toplevel(parent)
-    Output(top, bondForceParams, atoms_def)
+    Restraints(parent, top, bondForceParams)
     top.grab_set()
     top.focus_set()
     top.wait_window()

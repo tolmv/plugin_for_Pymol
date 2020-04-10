@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import tempfile
 import webbrowser
+from pymol import cmd
 
 try:
     from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button
@@ -11,6 +12,8 @@ try:
 except ImportError:
     from tkinter import BooleanVar, Radiobutton, Entry, Label, Button
     from tkinter.messagebox import showinfo
+
+from .wizard import RestraintWizard
 
 help_1 = """<html>
 <title>Help</title>
@@ -43,12 +46,12 @@ def kCal_to_kJ(E):
 
 
 class Restraints(object):
-    def __init__(self, main, bondForceParams):
+    def __init__(self, parent, main, bondForceParams):
         self.help = []
+        self.parent = parent
         self.main = main
         self.main.title('PyFepRestr')
         self.main.protocol('WM_DELETE_WINDOW', self.exit)
-        self.isexit = False
         self.labels = ['Temp',
                        'K raA',
                        u'K \u03b8a', u'K \u03b8A',
@@ -119,7 +122,6 @@ class Restraints(object):
         self.helpProgr.grid(row=12, column=0, padx=5, pady=5)
 
     def exit(self):
-        self.isexit = True
         self.main.destroy()
 
     def refresh(self):
@@ -165,6 +167,17 @@ class Restraints(object):
         self.bondForceParams['K_phi_aA'] = self.help[5]  # force constant for dihedral (kJ/mol/rad^2)
         self.bondForceParams['K_phi_AB'] = self.help[6]  # force constant for dihedral (kJ/mol/rad^2)
         showinfo('Info', 'Now choose the atoms you need')
+        atoms_def = {
+            'index_c': None,
+            'index_b': None,
+            'index_a': None,
+            'index_A': None,
+            'index_B': None,
+            'index_C': None
+        }
+        wiz = RestraintWizard(self.parent, self.bondForceParams, atoms_def)
+        cmd.set_wizard(wiz)
+        cmd.refresh_wizard()
         self.main.withdraw()
         self.main.destroy()
 

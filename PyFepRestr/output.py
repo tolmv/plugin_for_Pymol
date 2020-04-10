@@ -174,7 +174,7 @@ class Output(object):
         top = Toplevel(self.main)
         fra = Frame(top)
         fra.grid(row=0, column=0, pady=5, padx=5)
-        self.tx = Text(fra, width=130, height=30, wrap=WORD)
+        self.tx = Text(fra, width=130, height=20, wrap=WORD)
         scr = Scrollbar(fra, command=self.tx.yview)
         self.tx.configure(yscrollcommand=scr.set, state='disabled')
         self.tx.pack(side=LEFT)

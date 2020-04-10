@@ -5,6 +5,13 @@ from __future__ import print_function
 from pymol import cmd, CmdException
 from pymol.wizard import Wizard
 
+from .output import Output
+
+try:
+    from Tkinter import Toplevel
+except ImportError:
+    from tkinter import Toplevel
+
 
 def getAtomString(sel):
     atoms = cmd.get_model(sel)
@@ -15,8 +22,9 @@ def getAtomString(sel):
 
 
 class RestraintWizard(Wizard):
-    def __init__(self, bondForceParams, atoms_def):
+    def __init__(self, parent, bondForceParams, atoms_def):
         Wizard.__init__(self)
+        self.parent = parent
         self.atoms_def = atoms_def
         self.params_str = ['r_aA', 'th_a', "th_A1'", 'phi_ba', 'phi_aA', 'phi_AB']
         self.indexes_list = ['atom_c', 'atom_b', 'atom_a', "atom_A1", "atom_B1", "atom_C1"]
@@ -102,38 +110,39 @@ class RestraintWizard(Wizard):
             self.pickNextAtom(atom_name)
         else:
             self.pickNextAtom(atom_name)
-            r_aA = cmd.get_distance(atom1="pw2", atom2="pw3", state=0)
-            cmd.distance(self.params_str[0], "pw2", "pw3")
-            th_a = cmd.get_angle(atom1="pw1", atom2="pw2", atom3="pw3", state=0)
-            cmd.angle(self.params_str[1], "pw1", "pw2", "pw3")
-            th_A = cmd.get_angle(atom1="pw2", atom2="pw3", atom3="pw4", state=0)
-            cmd.angle(self.params_str[2], "pw2", "pw3", "pw4")
-            phi_ba = cmd.get_dihedral(atom1="pw0", atom2="pw1", atom3="pw2", atom4="pw3", state=0)
-            cmd.dihedral(self.params_str[3], "pw0", "pw1", "pw2", "pw3")
-            phi_aA = cmd.get_dihedral(atom1="pw1", atom2="pw2", atom3="pw3", atom4="pw4", state=0)
-            cmd.dihedral(self.params_str[4], "pw1", "pw2", "pw3", "pw4")
-            phi_AB = cmd.get_dihedral(atom1="pw2", atom2="pw3", atom3="pw4", atom4="pw5", state=0)
-            cmd.dihedral(self.params_str[5], "pw2", "pw3", "pw4", "pw5")
-            index_c = cmd.id_atom("pw0")
-            index_c_name = getAtomString('pw0')
-            index_b = cmd.id_atom("pw1")
-            index_b_name = getAtomString('pw1')
-            index_a = cmd.id_atom("pw2")
-            index_a_name = getAtomString('pw2')
-            index_A = cmd.id_atom("pw3")
-            index_A_name = getAtomString('pw3')
-            index_B = cmd.id_atom("pw4")
-            index_B_name = getAtomString('pw4')
-            index_C = cmd.id_atom("pw5")
-            index_C_name = getAtomString('pw5')
-            self.setBondForceParam(r_aA, th_a, th_A, phi_ba, phi_aA, phi_AB,
-                                   index_c, index_b, index_a, index_A, index_B, index_C)
-            self.setAtomsDef(index_c_name, index_b_name, index_a_name, index_A_name, index_B_name, index_C_name)
-            self.pick_count = 0
-            self.reset(reset=False)
-            cmd.set_wizard()
-            self.iswait = False
-            print("select_done")
+            self.doFinish()
+
+    def doFinish(self):
+        r_aA = cmd.get_distance(atom1="pw2", atom2="pw3", state=0)
+        cmd.distance(self.params_str[0], "pw2", "pw3")
+        th_a = cmd.get_angle(atom1="pw1", atom2="pw2", atom3="pw3", state=0)
+        cmd.angle(self.params_str[1], "pw1", "pw2", "pw3")
+        th_A = cmd.get_angle(atom1="pw2", atom2="pw3", atom3="pw4", state=0)
+        cmd.angle(self.params_str[2], "pw2", "pw3", "pw4")
+        phi_ba = cmd.get_dihedral(atom1="pw0", atom2="pw1", atom3="pw2", atom4="pw3", state=0)
+        cmd.dihedral(self.params_str[3], "pw0", "pw1", "pw2", "pw3")
+        phi_aA = cmd.get_dihedral(atom1="pw1", atom2="pw2", atom3="pw3", atom4="pw4", state=0)
+        cmd.dihedral(self.params_str[4], "pw1", "pw2", "pw3", "pw4")
+        phi_AB = cmd.get_dihedral(atom1="pw2", atom2="pw3", atom3="pw4", atom4="pw5", state=0)
+        cmd.dihedral(self.params_str[5], "pw2", "pw3", "pw4", "pw5")
+        index_c = cmd.id_atom("pw0")
+        index_c_name = getAtomString('pw0')
+        index_b = cmd.id_atom("pw1")
+        index_b_name = getAtomString('pw1')
+        index_a = cmd.id_atom("pw2")
+        index_a_name = getAtomString('pw2')
+        index_A = cmd.id_atom("pw3")
+        index_A_name = getAtomString('pw3')
+        index_B = cmd.id_atom("pw4")
+        index_B_name = getAtomString('pw4')
+        index_C = cmd.id_atom("pw5")
+        index_C_name = getAtomString('pw5')
+        self.setBondForceParam(r_aA, th_a, th_A, phi_ba, phi_aA, phi_AB,
+                               index_c, index_b, index_a, index_A, index_B, index_C)
+        self.setAtomsDef(index_c_name, index_b_name, index_a_name, index_A_name, index_B_name, index_C_name)
+        cmd.set_wizard()
+        top = Toplevel(self.parent)
+        Output(top, self.bondForceParams, self.atoms_def)
 
     def get_panel(self):
         return [
