@@ -34,8 +34,6 @@ def main(parent):
     top.wait_window()
     if restr.isexit:
         return
-    del restr
-    del top
     atoms_def = {
         'index_c': None,
         'index_b': None,
@@ -46,6 +44,7 @@ def main(parent):
     }
     wiz = RestraintWizard(bondForceParams, atoms_def)
     cmd.set_wizard(wiz)
+    cmd.refresh_wizard()
     while wiz.iswait:
         sleep(1)
     top = Toplevel(parent)
