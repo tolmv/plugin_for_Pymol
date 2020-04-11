@@ -172,53 +172,13 @@ class Output(object):
 
     def ViewGromacsTopol(self):
         top = Toplevel(self.main)
-        fra = Frame(top)
-        fra.grid(row=0, column=0, pady=5, padx=5)
-        self.tx = Text(fra, width=130, height=20, wrap=WORD)
-        scr = Scrollbar(fra, command=self.tx.yview)
-        self.tx.configure(yscrollcommand=scr.set, state='disabled')
-        self.tx.pack(side=LEFT)
-        scr.pack(side=RIGHT, fill=Y)
-        self.tx.bind('<Enter>', lambda e: self._bound_to_mousewheel(e, self.tx))
-        self.tx.bind('<Leave>', self._unbound_to_mousewheel)
-        closeTopolPrevB = Button(top, text='Exit', bg='red', command=top.destroy)
-        closeTopolPrevB.grid(row=1, column=0, pady=5)
         restraints = self.createGronacsRestr()
-        self._clean_txt()
-        self.tx.configure(state='normal')
+        self.tx = Text(top, width=130, height=20, wrap=WORD)
+        self.tx.grid(row=0, column=0, pady=5, padx=5)
         self.tx.insert(END, restraints)
         self.tx.configure(state='disabled')
-
-    def _bound_to_mousewheel(self, event, tx):
-        _ = event
-        self.tx.bind_all('<MouseWheel>', lambda e: self._on_mousewheel(e, tx))
-        self.tx.bind_all('<Button-4>', lambda e: self._on_mousewheel(e, tx))
-        self.tx.bind_all('<Button-5>', lambda e: self._on_mousewheel(e, tx))
-        self.tx.bind_all('<Up>', lambda e: self._on_mousewheel(e, tx))
-        self.tx.bind_all('<Down>', lambda e: self._on_mousewheel(e, tx))
-
-    def _unbound_to_mousewheel(self, event):
-        _ = event
-        self.tx.unbind_all('<MouseWheel>')
-        self.tx.unbind_all('<Button-4>')
-        self.tx.unbind_all('<Button-5>')
-        self.tx.unbind_all('<Up>')
-        self.tx.unbind_all('<Down>')
-
-    @staticmethod
-    def _on_mousewheel(event, tx):
-        if event.num == 4 or event.keysym == 'Up':
-            tx.yview_scroll(-1, 'units')
-        elif event.num == 5 or event.keysym == 'Down':
-            tx.yview_scroll(1, 'units')
-        else:
-            tx.yview_scroll(int(-1 * (event.delta / 120)), 'units')
-
-    def _clean_txt(self):
-        self.tx.configure(state='normal')
-        self.tx.delete('1.0', END)
-        self.tx.see(END)
-        self.tx.configure(state='disabled')
+        closeTopolPrevB = Button(top, text='Exit', bg='red', command=top.destroy)
+        closeTopolPrevB.grid(row=1, column=0, pady=5)
 
     def writeTopolFile(self):
         topolFile = askopenfilename(initialdir="/", title="Select file",

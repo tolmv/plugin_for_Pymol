@@ -55,7 +55,7 @@ class Restraints(object):
         self.labels = ['Temp',
                        'K raA',
                        u'K \u03b8a', u'K \u03b8A',
-                       u'K \u03c6ba', u'K \u03c6aA', u'K_\u03c6AB']
+                       u'K \u03c6ba', u'K \u03c6aA', u'K \u03c6AB']
         self.r_var = BooleanVar()
         self.r_var.set(1)
         self.rj1 = Radiobutton(main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
@@ -125,22 +125,14 @@ class Restraints(object):
         self.main.destroy()
 
     def refresh(self):
-
         if self.r_var.get():
             self.dimen_all[1].configure(text=u'kCal/mol/\u212b\u00b2')
-            self.dimen_all[2].configure(text=u'kCal/mol/rad\u00b2')
-            self.dimen_all[3].configure(text=u'kCal/mol/rad\u00b2')
-            self.dimen_all[4].configure(text=u'kCal/mol/rad\u00b2')
-            self.dimen_all[5].configure(text=u'kCal/mol/rad\u00b2')
-            self.dimen_all[6].configure(text=u'kCal/mol/rad\u00b2')
+            for dimen in self.dimen_all[2:]:
+                dimen.configure(text=u'kCal/mol/rad\u00b2')
         else:
             self.dimen_all[1].configure(text=u'kJ/mol/\u212b\u00b2')
-            self.dimen_all[2].configure(text=u'kJ/mol/rad\u00b2')
-            self.dimen_all[3].configure(text=u'kJ/mol/rad\u00b2')
-            self.dimen_all[4].configure(text=u'kJ/mol/rad\u00b2')
-            self.dimen_all[5].configure(text=u'kJ/mol/rad\u00b2')
-            self.dimen_all[6].configure(text=u'kJ/mol/rad\u00b2')
-
+            for dimen in self.dimen_all[2:]:
+                dimen.configure(text=u'kJ/mol/rad\u00b2')
         for dimen in self.dimen_all:
             dimen.update()
 
@@ -155,7 +147,9 @@ class Restraints(object):
                 self.entry_all[i]['bg'] = "red"
                 return
             self.help.append(f)
+        self.finish()
 
+    def finish(self):
         if self.r_var.get():
             self.help = list((self.help[0],)) + list(map(kCal_to_kJ, self.help[1:]))
 

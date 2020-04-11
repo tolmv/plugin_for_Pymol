@@ -92,7 +92,10 @@ class RestraintWizard(Wizard):
         cmd.set_view(view)
         cmd.set("sphere_scale", '0.3', self.indexes_list[self.pick_count])
         cmd.show_as('spheres', self.indexes_list[self.pick_count])
-        cmd.color("red", self.indexes_list[self.pick_count])
+        if self.pick_count < 3:
+            cmd.color("red", self.indexes_list[self.pick_count])
+        else:
+            cmd.color("green", self.indexes_list[self.pick_count])
         self.pick_count += 1
         self.error = None
         # necessary to force update of the prompt
@@ -140,9 +143,9 @@ class RestraintWizard(Wizard):
         self.setBondForceParam(r_aA, th_a, th_A, phi_ba, phi_aA, phi_AB,
                                index_c, index_b, index_a, index_A, index_B, index_C)
         self.setAtomsDef(index_c_name, index_b_name, index_a_name, index_A_name, index_B_name, index_C_name)
-        cmd.set_wizard()
         top = Toplevel(self.parent)
         Output(top, self.bondForceParams, self.atoms_def)
+        cmd.set_wizard()
 
     def get_panel(self):
         return [
