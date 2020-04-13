@@ -7,11 +7,6 @@ from pymol.wizard import Wizard
 
 from .output import Output
 
-try:
-    from Tkinter import Toplevel
-except ImportError:
-    from tkinter import Toplevel
-
 
 def getAtomString(sel):
     atoms = cmd.get_model(sel)
@@ -143,8 +138,7 @@ class RestraintWizard(Wizard):
         self.setBondForceParam(r_aA, th_a, th_A, phi_ba, phi_aA, phi_AB,
                                index_c, index_b, index_a, index_A, index_B, index_C)
         self.setAtomsDef(index_c_name, index_b_name, index_a_name, index_A_name, index_B_name, index_C_name)
-        top = Toplevel(self.parent)
-        Output(top, self.bondForceParams, self.atoms_def)
+        Output(self.parent, self.bondForceParams, self.atoms_def)
         cmd.set_wizard()
 
     def get_panel(self):

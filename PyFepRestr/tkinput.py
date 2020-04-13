@@ -7,10 +7,10 @@ import webbrowser
 from pymol import cmd
 
 try:
-    from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button
+    from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Toplevel
     from tkMessageBox import showinfo
 except ImportError:
-    from tkinter import BooleanVar, Radiobutton, Entry, Label, Button
+    from tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Toplevel
     from tkinter.messagebox import showinfo
 
 from .wizard import RestraintWizard
@@ -46,58 +46,39 @@ def kCal_to_kJ(E):
 
 
 class Restraints(object):
-    def __init__(self, parent, main, bondForceParams):
-        self.help = []
+    def __init__(self, parent, bondForceParams, atoms_def):
         self.parent = parent
-        self.main = main
+        self.main = Toplevel(parent)
+        self.bondForceParams = bondForceParams
+        self.atoms_def = atoms_def
         self.main.title('PyFepRestr')
-        self.main.protocol('WM_DELETE_WINDOW', self.exit)
-        self.labels = ['Temp',
-                       'K raA',
-                       u'K \u03b8a', u'K \u03b8A',
-                       u'K \u03c6ba', u'K \u03c6aA', u'K \u03c6AB']
+        self.validated_values = []
         self.r_var = BooleanVar()
         self.r_var.set(1)
-        self.rj1 = Radiobutton(main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
-        self.rcal1 = Radiobutton(main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
-        self.rj1.grid(row=0, column=0, padx=5, pady=5)
-        self.rcal1.grid(row=0, column=1, padx=5, pady=5)
+        rj1 = Radiobutton(self.main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
+        rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
+        rj1.grid(row=0, column=0, padx=5, pady=5)
+        rcal1.grid(row=0, column=1, padx=5, pady=5)
 
-        self.entry0 = Entry(main)
-        self.entry1 = Entry(main)
-        self.entry2 = Entry(main)
-        self.entry3 = Entry(main)
-        self.entry4 = Entry(main)
-        self.entry5 = Entry(main)
-        self.entry6 = Entry(main)
+        labels = ['Temp',
+                  'K raA',
+                  u'K \u03b8a', u'K \u03b8A',
+                  u'K \u03c6ba', u'K \u03c6aA', u'K \u03c6AB']
 
-        self.label_answer0 = Label(main, font=15)
-        self.label_answer1 = Label(main, font=15)
-        self.label_answer2 = Label(main, font=15)
-        self.label_answer3 = Label(main, font=15)
-        self.label_answer4 = Label(main, font=15)
-        self.label_answer5 = Label(main, font=15)
-        self.label_answer6 = Label(main, font=15)
+        label_all = []
+        self.entry_all = []
+        self.entry_all_get = []
+        self.dimen_all = []
+        for lab in labels:
+            label_answer = Label(self.main, text=lab, font=15)
+            label_all.append(label_answer)
+            entry = Entry(self.main)
+            self.entry_all.append(entry)
+            self.entry_all_get.append(entry.get)
+            dimen = Label(self.main, font=15)
+            self.dimen_all.append(dimen)
 
-        self.dimen0 = Label(main, font=15)
-        self.dimen1 = Label(main, font=15)
-        self.dimen2 = Label(main, font=15)
-        self.dimen3 = Label(main, font=15)
-        self.dimen4 = Label(main, font=15)
-        self.dimen5 = Label(main, font=15)
-        self.dimen6 = Label(main, font=15)
-
-        self.dimen_all = [self.dimen0, self.dimen1, self.dimen2, self.dimen3, self.dimen4,
-                          self.dimen5, self.dimen6]
-
-        self.entry_all = [self.entry0, self.entry1, self.entry2, self.entry3, self.entry4,
-                          self.entry5, self.entry6]
-
-        self.label_all = [self.label_answer0, self.label_answer1,
-                          self.label_answer2, self.label_answer3, self.label_answer4,
-                          self.label_answer5, self.label_answer6]
-
-        for i, (label, entry, dimen) in enumerate(zip(self.label_all, self.entry_all, self.dimen_all)):
+        for i, (label, entry, dimen) in enumerate(zip(label_all, self.entry_all, self.dimen_all)):
             label.grid(row=i + 1, column=1, padx=5, pady=5)
             entry.grid(row=i + 1, column=2, padx=5, pady=5)
             dimen.grid(row=i + 1, column=3, padx=5, pady=5)
@@ -105,24 +86,14 @@ class Restraints(object):
         self.dimen_all[0]['text'] = 'Kelvin'
         self.refresh()
 
-        for i in range(len(self.label_all)):
-            self.label_all[i]['text'] = self.labels[i]
-
-        self.entry_all_get = [self.entry0.get, self.entry1.get, self.entry2.get,
-                              self.entry3.get, self.entry4.get,
-                              self.entry5.get, self.entry6.get]
-        self.bondForceParams = bondForceParams
-        self.button_res = Button(main, text="Next -> ", command=self.validate)
+        self.button_res = Button(self.main, text="Next -> ", command=self.validate)
         self.button_res.grid(row=11, column=2, padx=5, pady=5)
 
-        self.destroyProgr = Button(main, text='Exit', bg='red', command=self.exit)
+        self.destroyProgr = Button(self.main, text='Exit', bg='red', command=self.main.destroy)
         self.destroyProgr.grid(row=0, column=3, padx=5, pady=5)
 
-        self.helpProgr = Button(main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
+        self.helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
         self.helpProgr.grid(row=12, column=0, padx=5, pady=5)
-
-    def exit(self):
-        self.main.destroy()
 
     def refresh(self):
         if self.r_var.get():
@@ -146,30 +117,23 @@ class Restraints(object):
             except ValueError:
                 self.entry_all[i]['bg'] = "red"
                 return
-            self.help.append(f)
+            self.validated_values.append(f)
         self.finish()
 
     def finish(self):
         if self.r_var.get():
-            self.help = list((self.help[0],)) + list(map(kCal_to_kJ, self.help[1:]))
+            self.validated_values = list((self.validated_values[0],)) + \
+                                    list(map(kCal_to_kJ, self.validated_values[1:]))
 
-        self.bondForceParams['T'] = self.help[0]  # Temperature (K)
-        self.bondForceParams['K_r_aA'] = self.help[1] * 100  # force constant for distance (kJ/mol/nm^2)
-        self.bondForceParams['K_th_a'] = self.help[2]  # force constant for angle (kJ/mol/rad^2)
-        self.bondForceParams['K_th_A'] = self.help[3]  # force constant for angle (kJ/mol/rad^2)
-        self.bondForceParams['K_phi_ba'] = self.help[4]  # force constant for dihedral (kJ/mol/rad^2)
-        self.bondForceParams['K_phi_aA'] = self.help[5]  # force constant for dihedral (kJ/mol/rad^2)
-        self.bondForceParams['K_phi_AB'] = self.help[6]  # force constant for dihedral (kJ/mol/rad^2)
+        self.bondForceParams['T'] = self.validated_values[0]  # Temperature (K)
+        self.bondForceParams['K_r_aA'] = self.validated_values[1] * 100  # force constant for distance (kJ/mol/nm^2)
+        self.bondForceParams['K_th_a'] = self.validated_values[2]  # force constant for angle (kJ/mol/rad^2)
+        self.bondForceParams['K_th_A'] = self.validated_values[3]  # force constant for angle (kJ/mol/rad^2)
+        self.bondForceParams['K_phi_ba'] = self.validated_values[4]  # force constant for dihedral (kJ/mol/rad^2)
+        self.bondForceParams['K_phi_aA'] = self.validated_values[5]  # force constant for dihedral (kJ/mol/rad^2)
+        self.bondForceParams['K_phi_AB'] = self.validated_values[6]  # force constant for dihedral (kJ/mol/rad^2)
         showinfo('Info', 'Now choose the atoms you need')
-        atoms_def = {
-            'index_c': None,
-            'index_b': None,
-            'index_a': None,
-            'index_A': None,
-            'index_B': None,
-            'index_C': None
-        }
-        wiz = RestraintWizard(self.parent, self.bondForceParams, atoms_def)
+        wiz = RestraintWizard(self.parent, self.bondForceParams, self.atoms_def)
         cmd.set_wizard(wiz)
         cmd.refresh_wizard()
         self.main.withdraw()
