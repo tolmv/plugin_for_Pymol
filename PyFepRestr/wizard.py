@@ -1,9 +1,15 @@
 # coding=utf-8
 from __future__ import absolute_import
-from __future__ import print_function
 
 from pymol import cmd, CmdException
 from pymol.wizard import Wizard
+
+try:
+    from Tkinter import Toplevel
+    from tkMessageBox import showerror
+except ImportError:
+    from tkinter import Toplevel
+    from tkinter.messagebox import showerror
 
 from .output import Output
 
@@ -12,7 +18,7 @@ def getAtomString(sel):
     atoms = cmd.get_model(sel)
     s = ""
     for at in atoms.atom:
-        s += (at.name + '_' + at.resn + str(at.resi) + "/" + at.chain)
+        s += (at.name + '_' + at.resn + str(at.resi) + ("/" + at.chain if at.chain else ""))
     return s
 
 
@@ -71,7 +77,7 @@ class RestraintWizard(Wizard):
             cmd.edit("%s and not %s*" % (name, self.object_prefix))
             self.do_pick(0)
         except CmdException as pmce:
-            print(pmce)
+            showerror("Error", str(pmce))
 
     def pickNextAtom(self, atom_name):
         # transfer the click selection to a named selection
@@ -101,7 +107,7 @@ class RestraintWizard(Wizard):
         # this shouldn't actually happen if going through the "do_select"
         if picked_bond:
             self.error = "Error: please select an atom, not a bond."
-            print(self.error)
+            showerror("Error", self.error)
             return
         atom_name = self.object_prefix + str(self.pick_count)
         if self.pick_count < 5:
@@ -138,7 +144,8 @@ class RestraintWizard(Wizard):
         self.setBondForceParam(r_aA, th_a, th_A, phi_ba, phi_aA, phi_AB,
                                index_c, index_b, index_a, index_A, index_B, index_C)
         self.setAtomsDef(index_c_name, index_b_name, index_a_name, index_A_name, index_B_name, index_C_name)
-        Output(self.parent, self.bondForceParams, self.atoms_def)
+        top = Toplevel(self.parent)
+        Output(top, self.bondForceParams, self.atoms_def)
         cmd.set_wizard()
 
     def get_panel(self):

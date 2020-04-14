@@ -1,16 +1,15 @@
 # coding=utf-8
 from __future__ import absolute_import
-from __future__ import print_function
 
 import tempfile
 import webbrowser
 from pymol import cmd
 
 try:
-    from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Toplevel
+    from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Toplevel, W
     from tkMessageBox import showinfo
 except ImportError:
-    from tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Toplevel
+    from tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Toplevel, W
     from tkinter.messagebox import showinfo
 
 from .wizard import RestraintWizard
@@ -48,7 +47,7 @@ def kCal_to_kJ(E):
 class Restraints(object):
     def __init__(self, parent, bondForceParams, atoms_def):
         self.parent = parent
-        self.main = Toplevel(parent)
+        self.main = Toplevel(self.parent)
         self.bondForceParams = bondForceParams
         self.atoms_def = atoms_def
         self.main.title('PyFepRestr')
@@ -70,18 +69,18 @@ class Restraints(object):
         self.entry_all_get = []
         self.dimen_all = []
         for lab in labels:
-            label_answer = Label(self.main, text=lab, font=15)
+            label_answer = Label(self.main, text=lab, font=15, anchor=W)
             label_all.append(label_answer)
             entry = Entry(self.main)
             self.entry_all.append(entry)
             self.entry_all_get.append(entry.get)
-            dimen = Label(self.main, font=15)
+            dimen = Label(self.main, font=15, anchor=W)
             self.dimen_all.append(dimen)
 
         for i, (label, entry, dimen) in enumerate(zip(label_all, self.entry_all, self.dimen_all)):
-            label.grid(row=i + 1, column=1, padx=5, pady=5)
-            entry.grid(row=i + 1, column=2, padx=5, pady=5)
-            dimen.grid(row=i + 1, column=3, padx=5, pady=5)
+            label.grid(row=i + 1, column=1, padx=5, pady=5, sticky=W)
+            entry.grid(row=i + 1, column=2, padx=5, pady=5, sticky=W)
+            dimen.grid(row=i + 1, column=3, padx=10, pady=5, sticky=W)
 
         self.dimen_all[0]['text'] = 'Kelvin'
         self.refresh()

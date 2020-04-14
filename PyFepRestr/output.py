@@ -76,7 +76,7 @@ def calc_dG(T, r_aA, th_a, th_A, K_r_aA, K_th_a, K_th_A, K_phi_ba, K_phi_aA, K_p
 
 
 class Output(object):
-    def __init__(self, parent, bondForceParams, atoms_def):
+    def __init__(self, main, bondForceParams, atoms_def):
         self.bondForceParams = bondForceParams
         self.dG_off_kJ = calc_dG(
             bondForceParams['T'],
@@ -94,7 +94,7 @@ class Output(object):
         self.dG_off_kCal = kJ_to_kCal(self.dG_off_kJ)
         self.dG_on_kCal = kJ_to_kCal(self.dG_on_kJ)
         self.atoms_def = atoms_def
-        self.main = Toplevel(parent)
+        self.main = main
         self.main.title('PyFepRestr')
         self.r_var = BooleanVar()
         self.r_var.set(0)
