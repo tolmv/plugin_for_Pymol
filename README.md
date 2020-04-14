@@ -66,6 +66,8 @@ To install a plugin, open PyMOL and then go to
 
 
 You will have the option to install from a file on your computer (*.py, *.zip) or or directly from the GitHub by providing the url of repository.
+
+
 ![image](images/Plugin_manager.png)
 
 
