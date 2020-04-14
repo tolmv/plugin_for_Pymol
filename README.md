@@ -80,6 +80,7 @@ Then you need find **PyFepRestr** and click on the button **Uninstall**.
 ![image](images/Plug_manager_del.png)
 
 Then you need choose **Yes**
+
 ![image](images/Uninstall_yes_or_no.png)
 
 #### Legacy Notes
