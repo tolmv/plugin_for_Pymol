@@ -58,7 +58,21 @@ Example:
 ```
 
 
+Installation
+============
+To install a plugin, open PyMOL and then go to 
+>**Plugin -> Plugin Manager -> Install New Plugin**
+![image](images/Plugin->Plugin_Manager.png)
 
+
+You will have the option to install from a file on your computer (*.py, *.zip) or or directly from the GitHub by providing the url of repository.
+![image](images/Plugin_manager.png)
+
+
+
+#### Legacy Notes
+##### MacPyMOL
+MacPyMOL was the native macOS version of PyMOL before version 2.0. It supported Plugins only in the [X11 Hybrid mode](https://pymolwiki.org/index.php/MAC_Install#X11_Hybrid).
 
 References
 ----------
