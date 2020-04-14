@@ -76,6 +76,8 @@ You will have the option to install from a file on your computer (*.py, *.zip) o
 ##### MacPyMOL
 MacPyMOL was the native macOS version of PyMOL before version 2.0. It supported Plugins only in the [X11 Hybrid mode](https://pymolwiki.org/index.php/MAC_Install#X11_Hybrid).
 
+[Here](https://pymolwiki.org/index.php/Plugins) you can find some more information for installation on your version PyMol.
+
 References
 ----------
 1. Aldeghi M, Bluck JP, Biggin PC. Absolute Alchemical Free Energy Calculations
