@@ -103,8 +103,8 @@ class Output(object):
         rj1.grid(row=0, column=0, padx=5, pady=5)
         rcal1.grid(row=0, column=1, padx=5, pady=5)
 
-        name0 = Label(self.main, text=u'\u0394G_off = ', font=15)
-        name1 = Label(self.main, text=u'\u0394G_on = ', font=15)
+        name0 = Label(self.main, text=u'\u0394G_off = ')
+        name1 = Label(self.main, text=u'\u0394G_on = ')
         name0.grid(row=1, column=0, padx=5, pady=5)
         name1.grid(row=2, column=0, padx=5, pady=5)
 

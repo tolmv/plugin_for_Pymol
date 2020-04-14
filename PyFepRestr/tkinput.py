@@ -34,6 +34,11 @@ Exit the program.
  two angle (θa and θA), and three dihedral (φba, φaA, and φAB) restraints. Temp and K values must be > 0.<br>
  The value is in the range of 5-50 kCal/mol/rad<sup>2</sup> (or kCal/mol/Å<sup>2</sup> are acceptable.<br>
  Recommended value is 10 kCal/mol/rad<sup>2</sup> (or kCal/mol/Å<sup>2</sup>.<br>
+ 
+ <h2 align="left" style="color: Black"> Next Button</h2>
+ 
+ On the next step you choice six atoms (3 for ligand (c-b-a) and 3 for protein (A-B-C)).<br>
+ Sequence of selection is c-b-a-A-B-C or C-B-A-a-b-c.
  </body>
 </html>
 
@@ -69,12 +74,12 @@ class Restraints(object):
         self.entry_all_get = []
         self.dimen_all = []
         for lab in labels:
-            label_answer = Label(self.main, text=lab, font=15, anchor=W)
+            label_answer = Label(self.main, text=lab, anchor=W)
             label_all.append(label_answer)
             entry = Entry(self.main)
             self.entry_all.append(entry)
             self.entry_all_get.append(entry.get)
-            dimen = Label(self.main, font=15, anchor=W)
+            dimen = Label(self.main, anchor=W)
             self.dimen_all.append(dimen)
 
         for i, (label, entry, dimen) in enumerate(zip(label_all, self.entry_all, self.dimen_all)):
