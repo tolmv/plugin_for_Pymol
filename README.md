@@ -60,7 +60,7 @@ Example:
 
 Installation and Removed
 ============
-###Installation
+### Installation
 To install a plugin, open PyMOL and then go to 
 >**Plugin -> Plugin Manager -> Install New Plugin**
 ![image](images/Plugin->Plugin_Manager.png)
@@ -75,7 +75,7 @@ You will have the option to install from a file on your computer (*.py, *.zip) o
 To uninstall plugin you need go to 
 >**Plugin -> Plugin Manager -> Installed Plugins**
 
-Then you need find **PyFepRestr** and click on button **Uninstall**.  
+Then you need find **PyFepRestr** and click on the button **Uninstall**.  
 
 ![image](images/Plug_manager_del.png)
 
