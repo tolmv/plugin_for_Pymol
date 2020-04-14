@@ -83,6 +83,8 @@ Then you need choose **Yes**
 
 ![image](images/Uninstall_yes_or_no.png)
 
+**Important point is the restart PyMol, after deleting the plugin.**
+
 #### Legacy Notes
 ##### MacPyMOL
 MacPyMOL was the native macOS version of PyMOL before version 2.0. It supported Plugins only in the [X11 Hybrid mode](https://pymolwiki.org/index.php/MAC_Install#X11_Hybrid).
