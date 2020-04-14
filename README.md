@@ -58,8 +58,9 @@ Example:
 ```
 
 
-Installation
+Installation and Removed
 ============
+###Installation
 To install a plugin, open PyMOL and then go to 
 >**Plugin -> Plugin Manager -> Install New Plugin**
 ![image](images/Plugin->Plugin_Manager.png)
@@ -70,7 +71,16 @@ You will have the option to install from a file on your computer (*.py, *.zip) o
 
 ![image](images/Plugin_manager.png)
 
+### Uninstallation
+To uninstall plugin you need go to 
+>**Plugin -> Plugin Manager -> Installed Plugins**
 
+Then you need find **PyFepRestr** and click on button **Uninstall**.  
+
+![image](images/Plug_manager_del.png)
+
+Then you need choose **Yes**
+![image](Uninstall_yes_or_no.png)
 
 #### Legacy Notes
 ##### MacPyMOL
@@ -79,15 +89,19 @@ MacPyMOL was the native macOS version of PyMOL before version 2.0. It supported 
 ##### Installation for PyMol 2.X
 After following the above instructions, you need to search the plugin in **Plugin -> Legacy Plugin -> PyFepRestr**.
 
+![image](images/Legacy_Plugins.png)
+
+
 [Here](https://pymolwiki.org/index.php/Plugins) you can find some more information for installation on your version PyMol.
+
 
 Software Requirement
 ----------
 
-To install and use the plugin you need to have version PyMol 1.5.4 or more new.
-This plugin can work with PyMol 2.X
-Also you need to have version Gromacs 2016 series or more new.
-Download new version [PyMol](https://pymol.org/2/?#download) and [Gromacs](http://manual.gromacs.org/documentation/).
+To install and use the plugin you need to have version PyMol 1.5.4 or more new.  
+This plugin can work with PyMol 2.X 
+Also you need to have version Gromacs 2016 series or more new.  
+Download new version [PyMol](https://pymol.org/2/?#download) and [Gromacs](http://manual.gromacs.org/documentation/).  
 
 
 References
