@@ -5,10 +5,16 @@ PyFepRestr
 Short Description
 -----------------
 PyFepRestr (PyMol Plugin for Restraints) is plugin designed to calculate the Free Energy of the Protein - Ligand complexes.
-The plugin here described require the three-dimensional coordinates of the protein–ligand complex as a starting point.  
+This plugin automates the process of searching for the characteristics of atoms, replacing the graphical interface that is built into PyMol.
+
+The programme here described require the three-dimensional coordinates of the protein–ligand complex as a starting point.  
 The structure can be obtained experimentally (e.g., from X-ray crystal- lography or NMR) or from any modeling approach (e.g., from docking), depending on the objective of the calculations.
-When using the set of restraints proposed by Boresch et al. \[2], one distance, two angle, and three dihedral harmonic restraints between the ligand and the protein need to be defined. Thus, one needs to choose three protein and three ligand atoms to be involved in the restraints, the values of the harmonic potentials and their force constants.
-Protein–ligand restraints should  be applied in Gromacs through the use of the [intermolecular_interactions] section at the very end of the topology file.
+
+Before start you need to determine the temperature and force constants of PL complex in the first window.
+When using the set of restraints proposed by Boresch et al. \[2], one distance, two angle, and three dihedral harmonic restraints between the ligand and the protein need to be defined. Thus, one needs to choose three protein and three ligand atoms to be involved in the restraints directly in PyMol. 
+The third window displays the values ΔG and you will be asked to save in gromacs topology file your force constants  
+in state A and B.
+
 
 
 Theory
