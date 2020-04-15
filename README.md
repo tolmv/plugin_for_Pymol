@@ -25,15 +25,15 @@ The protein-ligand contribution in  ΔG  needs to be estimated via simulations,
 
 where V° is the standard volume of 1660 Å<sup>3</sup>, r<sub>aA</sub> is the reference
 value chosen for the distance restraint, θ<sub>a</sub> and θ<sub>A</sub> are the reference
-values of the two angle restraints, and k are the force constants of
+values of the two angle restraints, and all values of k are the force constants of
 the harmonic restraints for the one distance (r<sub>aA</sub>), two angle (θa
 and θA), and three dihedral (φ<sub>ba</sub>, φ<sub>aA</sub>, and φ<sub>AB</sub>) restraints.
 
 Protein–ligand restraints can now be applied in Gromacs
 through the use of the \[intermolecular_interactions]
 section at the very end of the topology file \[1]. In this section, it is
-possible to define bonded terms between any atom in the
-system using global indices (i.e., the indices found in the coordinates file).
+possible to define bonded terms between  atoms of the
+system using global indices (i.e., the indices were found in the coordinates file).
  To generate harmonic restraints, bonds of type
 6, angles of type 1, and dihedrals of type 2, can be used (see
 Table 5.5 in the Gromacs manual) as shown in the example
@@ -61,25 +61,25 @@ Example:
 Installation and Removed
 ============
 ### Installation
-To install a plugin, open PyMOL and then go to 
+To install  plugin, open PyMOL and then go to 
 >**Plugin -> Plugin Manager -> Install New Plugin**
 ![image](images/Plugin->Plugin_Manager.png)
 
 
-You will have the option to install from a file on your computer (*.py, *.zip) or or directly from the GitHub by providing the url of repository.
+You will have the options to install from a file on your computer (*.py, *.zip) or  directly from the GitHub by providing the url of repository.
 
 
 ![image](images/Plugin_manager.png)
 
 ### Uninstallation
-To uninstall plugin you need go to 
+To uninstall plugin you need to go to 
 >**Plugin -> Plugin Manager -> Installed Plugins**
 
 Then you need find **PyFepRestr** and click on the button **Uninstall**.  
 
 ![image](images/Plug_manager_del.png)
 
-Then you need choose **Yes**
+After that choose **Yes**
 
 ![image](images/Uninstall_yes_or_no.png)
 
@@ -95,15 +95,15 @@ After following the above instructions, you need to search the plugin in **Plugi
 ![image](images/Legacy_Plugins.png)
 
 
-[Here](https://pymolwiki.org/index.php/Plugins) you can find some more information for installation on your version PyMol.
+[Here](https://pymolwiki.org/index.php/Plugins) you can find  more information for installation on your version PyMol.
 
 
 Software Requirement
 ----------
 
-To install and use the plugin you need to have version PyMol 1.5.4 or more new.  
+To install and use the plugin you need to have version PyMol 1.5.4 or later.  
 This plugin can work with PyMol 2.X 
-Also you need to have version Gromacs 2016 series or more new.  
+Also you need to have version Gromacs 2016 series or later.  
 Download new version [PyMol](https://pymol.org/2/?#download) and [Gromacs](http://manual.gromacs.org/documentation/).  
 
 
