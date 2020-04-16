@@ -113,7 +113,7 @@ After following the above instructions, you need to search the plugin in **Plugi
 Software Requirement
 ----------
 
-To install and use the plugin you need to have version PyMol 1.5.4 or later.  
+To install and use the plugin you need to have version PyMol 1.5.0.6 or later.  
 This plugin can work with PyMol 2.X 
 Also you need to have version Gromacs 2016 series or later.  
 Download new version [PyMol](https://pymol.org/2/?#download) and [Gromacs](http://manual.gromacs.org/documentation/).  
