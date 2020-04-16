@@ -1,4 +1,3 @@
-# coding=utf-8
 """
 PyFepRestr
 (c) Alexander Lashkov, Ivan Tolmachev, Sergey Rubinsky
@@ -58,7 +57,6 @@ Exit the program.
  Sequence of selection is c-b-a-A-B-C or C-B-A-a-b-c.
  </body>
 </html>
-
 """
 
 help_2 = """<html>
@@ -97,7 +95,6 @@ Exit the program.
 Here you can see value of &Delta;G.<br>
 If you need some more info, see documentation.
 </body>
-
 </html>
 """
 
