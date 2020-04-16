@@ -81,7 +81,7 @@ To install  plugin, open PyMOL and then go to
 You will have the options to install from a file on your computer (*.py, *.zip) or  directly from the GitHub by providing the url of repository.
 
 
-![image](images/Plugin_manager.png)
+![image](images/Plug_manager.png)
 
 ### Uninstallation
 To uninstall plugin you need to go to 
