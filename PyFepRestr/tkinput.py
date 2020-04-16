@@ -17,12 +17,6 @@ except ImportError:
 
 from .wizard import RestraintWizard
 
-if platform == "darwin":
-    button_font = label_font = radiobutton_font = Font(family='Arial', size=15)
-else:
-    radiobutton_font = Font(font=Radiobutton()["font"])
-    label_font = Font(font=Label()["font"])
-    button_font = Font(font=Button()["font"])
 
 help_1 = """<html>
 <title>Help</title>
@@ -67,13 +61,20 @@ class Restraints(object):
         self.atoms_def = atoms_def
         self.main.title('PyFepRestr')
         self.validated_values = []
+
+        if platform == "darwin":
+            self.button_font = self.label_font = self.radiobutton_font = Font(family='Arial', size=15)
+        else:
+            self.radiobutton_font = Font(font=Radiobutton()["font"])
+            self.label_font = Font(font=Label()["font"])
+            self.button_font = Font(font=Button()["font"])
+
         self.r_var = BooleanVar()
         self.r_var.set(1)
-
         rj1 = Radiobutton(self.main, text='kJ', variable=self.r_var, value=0, command=self.refresh,
-                          font=radiobutton_font)
+                          font=self.radiobutton_font)
         rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh,
-                            font=radiobutton_font)
+                            font=self.radiobutton_font)
         rj1.grid(row=0, column=0, padx=5, pady=5)
         rcal1.grid(row=0, column=1, padx=5, pady=5)
 
@@ -87,12 +88,12 @@ class Restraints(object):
         self.entry_all_get = []
         self.dimen_all = []
         for lab in labels:
-            label_answer = Label(self.main, text=lab, anchor=W, font=label_font)
+            label_answer = Label(self.main, text=lab, anchor=W, font=self.label_font)
             label_all.append(label_answer)
             entry = Entry(self.main)
             self.entry_all.append(entry)
             self.entry_all_get.append(entry.get)
-            dimen = Label(self.main, anchor=W, font=label_font)
+            dimen = Label(self.main, anchor=W, font=self.label_font)
             self.dimen_all.append(dimen)
 
         for i, (label, entry, dimen) in enumerate(zip(label_all, self.entry_all, self.dimen_all)):
@@ -103,13 +104,15 @@ class Restraints(object):
         self.dimen_all[0]['text'] = 'Kelvin'
         self.refresh()
 
-        self.button_res = Button(self.main, text="Next -> ", command=self.validate, font=button_font)
+        self.button_res = Button(self.main, text="Next -> ", command=self.validate, font=self.button_font)
         self.button_res.grid(row=11, column=2, padx=5, pady=5)
 
-        self.destroyProgr = Button(self.main, text='Exit', bg='red', command=self.main.destroy, font=button_font)
+        self.destroyProgr = Button(self.main, text='Exit', bg='red', command=self.main.destroy,
+                                   font=self.button_font)
         self.destroyProgr.grid(row=0, column=3, padx=5, pady=5)
 
-        self.helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp, font=button_font)
+        self.helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp,
+                                font=self.button_font)
         self.helpProgr.grid(row=12, column=0, padx=5, pady=5)
 
     def refresh(self):

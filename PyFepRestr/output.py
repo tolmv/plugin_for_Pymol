@@ -17,12 +17,6 @@ except ImportError:
     from tkinter.font import Font
     from tkinter.messagebox import showerror
 
-if platform == "darwin":
-    button_font = label_font = radiobutton_font = Font(family='Arial', size=15)
-else:
-    radiobutton_font = Font(font=Radiobutton()["font"])
-    label_font = Font(font=Label()["font"])
-    button_font = Font(font=Button()["font"])
 
 help_2 = """<html>
 <title>Help</title>
@@ -106,45 +100,55 @@ class Output(object):
         self.atoms_def = atoms_def
         self.main = main
         self.main.title('PyFepRestr')
+
+        if platform == "darwin":
+            self.button_font = self.label_font = self.radiobutton_font = Font(family='Arial', size=15)
+        else:
+            self.radiobutton_font = Font(font=Radiobutton()["font"])
+            self.label_font = Font(font=Label()["font"])
+            self.button_font = Font(font=Button()["font"])
+
         self.r_var = BooleanVar()
         self.r_var.set(0)
-
         rj1 = Radiobutton(self.main, text='kJ', variable=self.r_var, value=0, command=self.refresh,
-                          font=radiobutton_font)
+                          font=self.radiobutton_font)
         rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh,
-                            font=radiobutton_font)
+                            font=self.radiobutton_font)
         rj1.grid(row=0, column=0, padx=5, pady=5)
         rcal1.grid(row=0, column=1, padx=5, pady=5)
 
-        name0 = Label(self.main, text=u'\u0394G_off = ', font=label_font)
-        name1 = Label(self.main, text=u'\u0394G_on = ', font=label_font)
+        name0 = Label(self.main, text=u'\u0394G_off = ', font=self.label_font)
+        name1 = Label(self.main, text=u'\u0394G_on = ', font=self.label_font)
         name0.grid(row=1, column=0, padx=5, pady=5)
         name1.grid(row=2, column=0, padx=5, pady=5)
 
-        self.answer0 = Label(self.main, font=label_font)
-        self.answer1 = Label(self.main, font=label_font)
+        self.answer0 = Label(self.main, font=self.label_font)
+        self.answer1 = Label(self.main, font=self.label_font)
         self.answer0.grid(row=1, column=1, padx=5, pady=5)
         self.answer1.grid(row=2, column=1, padx=5, pady=5)
 
-        self.dimen0 = Label(self.main, font=label_font)
-        self.dimen1 = Label(self.main, font=label_font)
+        self.dimen0 = Label(self.main, font=self.label_font)
+        self.dimen1 = Label(self.main, font=self.label_font)
         self.dimen0.grid(row=1, column=2, padx=5, pady=5)
         self.dimen1.grid(row=2, column=2, padx=5, pady=5)
         self.refresh()
 
-        destroyProgr = Button(self.main, text='Exit', bg='red', command=self.main.destroy, font=button_font)
+        destroyProgr = Button(self.main, text='Exit', bg='red', command=self.main.destroy,
+                              font=self.button_font)
         destroyProgr.grid(row=0, column=3, padx=5, pady=5)
 
-        helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp, font=button_font)
+        helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp, font=self.button_font)
         helpProgr.grid(row=4, column=0, padx=5, pady=5)
 
-        name3 = Label(self.main, text='Gromacs topology file:', font=label_font)
+        name3 = Label(self.main, text='Gromacs topology file:', font=self.label_font)
         name3.grid(row=3, column=0, padx=5, pady=5)
 
-        previewButton = Button(self.main, text='Preview', bg='gray', command=self.ViewGromacsTopol, font=button_font)
+        previewButton = Button(self.main, text='Preview', bg='gray', command=self.ViewGromacsTopol,
+                               font=self.button_font)
         previewButton.grid(row=3, column=2, padx=5, pady=5)
 
-        saveFileButton = Button(self.main, text='Save in...', bg='gray', command=self.writeTopolFile, font=button_font)
+        saveFileButton = Button(self.main, text='Save in...', bg='gray', command=self.writeTopolFile,
+                                font=self.button_font)
         saveFileButton.grid(row=3, column=3, padx=5, pady=5)
 
     def refresh(self):
@@ -173,12 +177,13 @@ class Output(object):
 
     def ViewGromacsTopol(self):
         top = Toplevel(self.main)
+        top.title("topol.top")
         restraints = self.createGronacsRestr()
         tx = Text(top, width=130, height=20)
         tx.grid(row=0, column=0, pady=5, padx=5)
         tx.insert(END, restraints)
         tx.configure(state='disabled')
-        closeTopolPrevB = Button(top, text='Exit', bg='red', command=top.destroy, font=button_font)
+        closeTopolPrevB = Button(top, text='Exit', bg='red', command=top.destroy, font=self.button_font)
         closeTopolPrevB.grid(row=1, column=0, pady=5)
 
     def writeTopolFile(self):
