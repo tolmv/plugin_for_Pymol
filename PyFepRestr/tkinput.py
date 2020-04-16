@@ -113,7 +113,7 @@ class Restraints(object):
         self.destroyProgr.grid(row=0, column=3, padx=5, pady=5)
 
         if platform == 'darwin':                        
-            self.helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
+            self.helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp, font='Arial 15')
         else:    
             self.helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp)            
         self.helpProgr.grid(row=12, column=0, padx=5, pady=5)
