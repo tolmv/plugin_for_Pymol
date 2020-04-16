@@ -63,7 +63,7 @@ class Restraints(object):
         
         if platform == "darwin":
             rj1 = Radiobutton(self.main, text='kJ', variable=self.r_var, value=0, command=self.refresh, font='Arial 15')
-            rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh, font='Arial 15)
+            rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh, font='Arial 15')
         else:
             rj1 = Radiobutton(self.main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
             rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
