@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 PyFepRestr
 (c) Alexander Lashkov, Ivan Tolmachev, Sergey Rubinsky
