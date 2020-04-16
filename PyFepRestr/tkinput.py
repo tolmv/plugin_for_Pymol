@@ -4,6 +4,7 @@ from __future__ import absolute_import
 import tempfile
 import webbrowser
 from pymol import cmd
+from sys import platform
 
 try:
     from Tkinter import BooleanVar, Radiobutton, Entry, Label, Button, Toplevel, W
@@ -59,8 +60,13 @@ class Restraints(object):
         self.validated_values = []
         self.r_var = BooleanVar()
         self.r_var.set(1)
-        rj1 = Radiobutton(self.main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
-        rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
+        
+        if platform == "darwin":
+            rj1 = Radiobutton(self.main, text='kJ', variable=self.r_var, value=0, command=self.refresh, font='Arial 15')
+            rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh, font='Arial 15)
+        else:
+            rj1 = Radiobutton(self.main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
+            rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
         rj1.grid(row=0, column=0, padx=5, pady=5)
         rcal1.grid(row=0, column=1, padx=5, pady=5)
 
@@ -74,14 +80,20 @@ class Restraints(object):
         self.entry_all_get = []
         self.dimen_all = []
         for lab in labels:
-            label_answer = Label(self.main, text=lab, anchor=W)
+            if platform == 'darwin':
+                label_answer = Label(self.main, text=lab, anchor=W, font='Arial 15')
+            else:
+                label_answer = Label(self.main, text=lab, anchor=W)
             label_all.append(label_answer)
             entry = Entry(self.main)
             self.entry_all.append(entry)
             self.entry_all_get.append(entry.get)
-            dimen = Label(self.main, anchor=W)
+            if platform == 'darwin':
+                dimen = Label(self.main, anchor=W, font='Arial 15')
+            else:
+                dimen = Label(self.main, anchor=W)
             self.dimen_all.append(dimen)
-
+                              
         for i, (label, entry, dimen) in enumerate(zip(label_all, self.entry_all, self.dimen_all)):
             label.grid(row=i + 1, column=1, padx=5, pady=5, sticky=W)
             entry.grid(row=i + 1, column=2, padx=5, pady=5, sticky=W)
@@ -89,14 +101,21 @@ class Restraints(object):
 
         self.dimen_all[0]['text'] = 'Kelvin'
         self.refresh()
-
-        self.button_res = Button(self.main, text="Next -> ", command=self.validate)
+        if platform == 'darwin':
+            self.button_res = Button(self.main, text="Next -> ", command=self.validate, font='Arial 15')
+        else:                        
+            self.button_res = Button(self.main, text="Next -> ", command=self.validate)
         self.button_res.grid(row=11, column=2, padx=5, pady=5)
-
-        self.destroyProgr = Button(self.main, text='Exit', bg='red', command=self.main.destroy)
+        if platform == 'darwin':
+            self.destroyProgr = Button(self.main, text='Exit', bg='red', command=self.main.destroy, font='Arial 15')                        
+        else:    
+            self.destroyProgr = Button(self.main, text='Exit', bg='red', command=self.main.destroy)
         self.destroyProgr.grid(row=0, column=3, padx=5, pady=5)
 
-        self.helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
+        if platform == 'darwin':                        
+            self.helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
+        else:    
+            self.helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp)            
         self.helpProgr.grid(row=12, column=0, padx=5, pady=5)
 
     def refresh(self):
