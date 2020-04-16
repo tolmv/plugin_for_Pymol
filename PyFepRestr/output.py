@@ -4,6 +4,7 @@ from __future__ import absolute_import
 import math
 import tempfile
 import webbrowser
+from sys import platform
 
 try:
     from Tkinter import BooleanVar, Radiobutton, Label, Button, Text, END, Toplevel
@@ -98,40 +99,72 @@ class Output(object):
         self.main.title('PyFepRestr')
         self.r_var = BooleanVar()
         self.r_var.set(0)
-        rj1 = Radiobutton(self.main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
-        rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
+        
+        if platform == 'darwin':
+            rj1 = Radiobutton(self.main, text='kJ', variable=self.r_var, value=0, command=self.refresh, font='Arial 15')
+            rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh, font='Arial 15')
+        else:
+            rj1 = Radiobutton(self.main, text='kJ', variable=self.r_var, value=0, command=self.refresh)
+            rcal1 = Radiobutton(self.main, text="kCal", variable=self.r_var, value=1, command=self.refresh)
         rj1.grid(row=0, column=0, padx=5, pady=5)
         rcal1.grid(row=0, column=1, padx=5, pady=5)
-
-        name0 = Label(self.main, text=u'\u0394G_off = ')
-        name1 = Label(self.main, text=u'\u0394G_on = ')
+        
+        if platform == 'darwin':
+            name0 = Label(self.main, text=u'\u0394G_off = ', font='Arial 15')
+            name1 = Label(self.main, text=u'\u0394G_on = ', font='Arial 15')
+        else:    
+            name0 = Label(self.main, text=u'\u0394G_off = ')
+            name1 = Label(self.main, text=u'\u0394G_on = ')            
         name0.grid(row=1, column=0, padx=5, pady=5)
         name1.grid(row=2, column=0, padx=5, pady=5)
-
-        self.answer0 = Label(self.main, font=15)
-        self.answer1 = Label(self.main, font=15)
+        
+        if platform == 'darwin':
+            self.answer0 = Label(self.main, font='Arial 15')
+            self.answer1 = Label(self.main, font='Arial 15')
+        else:
+            self.answer0 = Label(self.main, font=15)
+            self.answer1 = Label(self.main, font=15)        
         self.answer0.grid(row=1, column=1, padx=5, pady=5)
         self.answer1.grid(row=2, column=1, padx=5, pady=5)
-
-        self.dimen0 = Label(self.main, font=15)
-        self.dimen1 = Label(self.main, font=15)
+        
+        if platform == 'darwin':
+            self.dimen0 = Label(self.main, font='Arial 15')
+            self.dimen1 = Label(self.main, font='Arial 15')
+        else:     
+            self.dimen0 = Label(self.main, font=15)
+            self.dimen1 = Label(self.main, font=15)
         self.dimen0.grid(row=1, column=2, padx=5, pady=5)
         self.dimen1.grid(row=2, column=2, padx=5, pady=5)
         self.refresh()
-
-        destroyProgr = Button(self.main, text='Exit', bg='red', command=self.main.destroy)
+        
+        if platform == 'darwin':
+            destroyProgr = Button(self.main, text='Exit', bg='red', command=self.main.destroy)
+        else:
+            destroyProgr = Button(self.main, text='Exit', bg='red', command=self.main.destroy)
         destroyProgr.grid(row=0, column=3, padx=5, pady=5)
-
-        helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp)
+        
+        if platform == 'darwin':                        
+            helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp, font='Arial 15')
+        else:
+            helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp)                                
         helpProgr.grid(row=4, column=0, padx=5, pady=5)
-
-        name3 = Label(self.main, text='Gromacs topology file:', font=15)
+        
+        if platform == 'darwin':                        
+            name3 = Label(self.main, text='Gromacs topology file:', font='Arial 15')
+        else:                        
+            name3 = Label(self.main, text='Gromacs topology file:', font=15)                                
         name3.grid(row=3, column=0, padx=5, pady=5)
-
-        previewButton = Button(self.main, text='Preview', bg='gray', command=self.ViewGromacsTopol)
+        
+        if platform == 'darwin':
+            previewButton = Button(self.main, text='Preview', bg='gray', command=self.ViewGromacsTopol, font='Arial 15')
+        else:
+            previewButton = Button(self.main, text='Preview', bg='gray', command=self.ViewGromacsTopol)
         previewButton.grid(row=3, column=2, padx=5, pady=5)
-
-        saveFileButton = Button(self.main, text='Save in...', bg='gray', command=self.writeTopolFile)
+        
+        if platform == 'darwin':
+            saveFileButton = Button(self.main, text='Save in...', bg='gray', command=self.writeTopolFile, font='Arial 15')
+        else:
+            saveFileButton = Button(self.main, text='Save in...', bg='gray', command=self.writeTopolFile)
         saveFileButton.grid(row=3, column=3, padx=5, pady=5)
 
     def refresh(self):
