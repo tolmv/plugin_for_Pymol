@@ -4,53 +4,26 @@ PyFepRestr
 
 Short Description
 -----------------
-PyFepRestr (PyMol Plugin for Restraints) is plugin designed to calculate the Free Energy of the Protein - Ligand complexes.
-This plugin automates the process of searching for the characteristics of atoms, replacing the graphical interface that is built into PyMol.
+PyFepRestr is a plug-in designed to set restraints on ligand atoms in the active center of a protein, as suggested by Boresch et al. \[1]  and used in free energy calculations with the Gromacs molecular dynamics program [2]. The plug-in allows you to determine from the coordinates of three ligand atoms and three protein atoms, the interatomic distance, the two angles between bonds and the three dihedral angles used in the Boresch formula  as well as write their values ​​to the Gromacs topology file. The coordinates of the protein-ligand complex can be obtained either experimentally using X-ray crystallography or NMR, or by modeling, for example, docking. At the beginning of the work, it is necessary to indicate in Table 1 the values ​​of the force constants and temperatures necessary for calculating the free energy corrections according to the Boresch formula \[1]. 
 
-The programme here described require the three-dimensional coordinates of the protein–ligand complex as a starting point.  
-The structure can be obtained experimentally (e.g., from X-ray crystal- lography or NMR) or from any modeling approach (e.g., from docking), depending on the objective of the calculations.
-
-Before start you need to determine the temperature and force constants of PL complex in the first window.
-When using the set of restraints proposed by Boresch et al. \[2], one distance, two angle, and three dihedral harmonic restraints between the ligand and the protein need to be defined. Thus, one needs to choose three protein and three ligand atoms to be involved in the restraints directly in PyMol. 
-The third window displays the values ΔG and you will be asked to save in gromacs topology file your force constants  
-in state A and B.
-
-
+Then, in the visualization window of the PyMol [3] structure, it is necessary to select using the “mouse” manipulator three ligand atoms and three protein atoms, to which restrictions should be applied. In window 2, the value of the correction to the free energy arising due to restraints will be displayed, and you will be asked to save the force constants in the Gromacs topology file.
 
 Theory
 ------------------
-The use of restraints is important in Alchemical Free Energy calculations 
- as it prevents the ligand from leaving the protein binding pocket while it is not interacting with the environment \[1].
- The set of restraints, proposed by Boresch et al. \[2],not only allows to keep the ligand in a specific orientation
-  relative to the binding pocket, but also provides an analytical solution for corresponding ΔG component. 
-  This set of restraints needs to be harmonic and is comprised by one distance, two angles, and three dihedrals,
-   to be applied between three atoms of the ligand and three of the protein, as shown in Fig.1
+The use of restraints is important in Alchemical Free Energy calculations as it prevents the ligand from leaving the protein binding pocket while it is not interacting with the environment \[4]. The set of restraints, proposed by Boresch et al. \[1],not only allows to keep the ligand in a specific orientation relative to the binding pocket, but also provides an analytical solution for corresponding ΔG component. This set of restraints needs to be harmonic and is comprised by one distance, two angles, and three dihedrals, to be applied between three atoms of the ligand and three of the protein, as shown in Fig.1
 
 ![image](images/restraints.png)
 
-The protein-ligand contribution in  ΔG  needs to be estimated via simulations,
- running multiple intermediate states where the force constants of the six harmonic restraints are interpolated between
-  their chosen value and zero. On the other hand, ΔG related to restraints of ligand may be calculated analytically
-   using the following formula (Eq. 32 in Boresch et al. \[2]), which also includes the standard state correction:
+The protein-ligand contribution in  ΔG  needs to be estimated via simulations, running multiple intermediate states where the force constants of the six harmonic restraints are interpolated between their chosen value and zero. On the other hand, ΔG related to restraints of ligand may be calculated analytically using the following formula (Eq. 32 in Boresch et al. \[1]), which also includes the standard state correction:
 
 ![image](images/formula.png)
 
-where V° is the standard volume of 1660 Å<sup>3</sup>, r<sub>aA</sub> is the reference
-value chosen for the distance restraint, θ<sub>a</sub> and θ<sub>A</sub> are the reference
-values of the two angle restraints, and all values of k are the force constants of
-the harmonic restraints for the one distance (r<sub>aA</sub>), two angle (θa
-and θA), and three dihedral (φ<sub>ba</sub>, φ<sub>aA</sub>, and φ<sub>AB</sub>) restraints.
+where V° is the standard volume of 1660 Å<sup>3</sup>, r<sub>aA</sub> is the reference value chosen for the distance restraint, θ<sub>a</sub> and θ<sub>A</sub> are the reference values of the two angle restraints, and all values of k are the force constants of the harmonic restraints for the one distance (r<sub>aA</sub>), two angle (θ<sub>a</sub> and θ<sub>A</sub>), and three dihedral (φ<sub>ba</sub>, φ<sub>aA</sub>, and φ<sub>AB</sub>) restraints.
 
-Protein–ligand restraints can now be applied in Gromacs
-through the use of the \[intermolecular_interactions]
-section at the very end of the topology file \[1]. In this section, it is
-possible to define bonded terms between  atoms of the
-system using global indices (i.e., the indices were found in the coordinates file).
- To generate harmonic restraints, bonds of type
-6, angles of type 1, and dihedrals of type 2, can be used (see
-Table 5.5 in the Gromacs manual) as shown in the example
-below. 
+Protein–ligand restraints can now be applied in Gromacs through the use of the [intermolecular_interactions] section at the very end of the topology file \[4]. In this section, it is possible to define bonded terms between  atoms of the system using global indices (i.e., the indices were found in the coordinates file). To generate harmonic restraints, bonds of type 6, angles of type 1, and dihedrals of type 2, can be used (see Table 5.5 in the Gromacs manual) as shown in the example below.
+
 Example:
+
 ```
 [ intermolecular_interactions]
 [ bonds ]
@@ -113,16 +86,15 @@ After following the above instructions, you need to search the plugin in **Plugi
 Software Requirement
 ----------
 
-To install and use the plugin you need to have version PyMol 1.5.0.6 or later.  
-This plugin can work with PyMol 2.X 
-Also you need to have version Gromacs 2016 series or later.  
-Download new version [PyMol](https://pymol.org/2/?#download) and [Gromacs](http://manual.gromacs.org/documentation/).  
+To install and use the plugin you need to have version PyMol 1.5.0.6 or later. This plugin can work with PyMol 2.X  Also you need to have version Gromacs 2016 series or later. Download new version [PyMol](https://pymol.org/2/?#download) and [Gromacs](http://manual.gromacs.org/documentation/).  
 
 
 References
 ----------
-1. Aldeghi M, Bluck JP, Biggin PC. Absolute Alchemical Free Energy Calculations
-for Ligand Binding: A Beginner's Guide. Methods Mol Biol. 2018;1762:199-232. doi:
-10.1007/978-1-4939-7756-7_11. PubMed PMID: 29594774.
-2. Boresch S, Tettinger F, Leitgeb M, Karplus M. Absolute Binding Free Energies: A Quantitative Approach for Their Calculation. J. Phys. Chem. B 2003, 107, 35, 9535-9551
-3. DeLano, W. L. (2002). PyMOL. DeLano Scientific, San Carlos, CA, 700.
+1. Boresch S, Tettinger F, Leitgeb M, Karplus M. Absolute Binding Free Energies: A Quantitative Approach for Their Calculation. *J. Phys. Chem. B* 2003, 107, 35, 9535-9551
+2. DeLano, W. L. (2002). PyMOL. DeLano Scientific, San Carlos, CA, 700.
+3. van der Spoel, et al. (2005). *J. Comput. Chem.* **26:** 1701-1718.
+4. Aldeghi M, Bluck JP, Biggin PC. Absolute Alchemical Free Energy Calculations
+  for Ligand Binding: A Beginner's Guide. *Methods Mol Biol.* 2018;1762:199-232. doi:
+  10.1007/978-1-4939-7756-7_11. PubMed PMID: 29594774.
+5. 
