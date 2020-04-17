@@ -94,7 +94,7 @@ class RestraintWizard(Wizard):
         try:
             cmd.edit("%s and not %s*" % (name, self.object_prefix))
             self.do_pick(0)
-        except CmdException as pmce:
+        except CmdException:
             showerror(self.parent, "Error", "Selection Error!")
             self.reset()
 
