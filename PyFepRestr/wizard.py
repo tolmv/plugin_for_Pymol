@@ -5,11 +5,10 @@ from pymol import cmd, CmdException
 from pymol.wizard import Wizard
 
 try:
-    from Tkinter import Toplevel
-    from tkMessageBox import showerror
+    from Tkinter import Toplevel, LEFT, W, Button, Label
+
 except ImportError:
-    from tkinter import Toplevel
-    from tkinter.messagebox import showerror
+    from tkinter import Toplevel, LEFT, W, Button, Label
 
 from .output import Output
 
@@ -20,6 +19,25 @@ def getAtomString(sel):
     for at in atoms.atom:
         s += (at.name + '_' + at.resn + str(at.resi) + ("/" + at.chain if at.chain else ""))
     return s
+
+
+class showerror(Toplevel):
+    def __init__(self, master, title, message):
+        Toplevel.__init__(self, master=master)
+        self.title(title)
+        Label(self, text=message, anchor=W, justify=LEFT).pack(pady=10, padx=10)
+        x = master.winfo_x() + master.winfo_width() // 2
+        y = master.winfo_y() + master.winfo_height() // 2
+        self.wm_geometry("+{:d}+{:d}".format(x, y))
+        self.resizable(False, False)
+        self.transient(master)
+        self.grab_set()
+        self.focus_force()
+        b = Button(self, text="OK", command=self.ok)
+        b.pack(pady=2, padx=5)
+
+    def ok(self):
+        self.destroy()
 
 
 class RestraintWizard(Wizard):
@@ -77,7 +95,8 @@ class RestraintWizard(Wizard):
             cmd.edit("%s and not %s*" % (name, self.object_prefix))
             self.do_pick(0)
         except CmdException as pmce:
-            showerror("Error", str(pmce))
+            showerror(self.parent, "Error", "Selection Error!")
+            self.reset()
 
     def pickNextAtom(self, atom_name):
         # transfer the click selection to a named selection
@@ -123,6 +142,9 @@ class RestraintWizard(Wizard):
         cmd.angle(self.params_str[1], "pw1", "pw2", "pw3")
         th_A = cmd.get_angle(atom1="pw2", atom2="pw3", atom3="pw4", state=0)
         cmd.angle(self.params_str[2], "pw2", "pw3", "pw4")
+        if not (r_aA and th_a and th_A):
+            showerror(self.parent, "Error!", "Maybe you made a mistake when choosing atoms!")
+            self.reset()
         phi_ba = cmd.get_dihedral(atom1="pw0", atom2="pw1", atom3="pw2", atom4="pw3", state=0)
         cmd.dihedral(self.params_str[3], "pw0", "pw1", "pw2", "pw3")
         phi_aA = cmd.get_dihedral(atom1="pw1", atom2="pw2", atom3="pw3", atom4="pw4", state=0)
@@ -144,7 +166,7 @@ class RestraintWizard(Wizard):
         self.setBondForceParam(r_aA, th_a, th_A, phi_ba, phi_aA, phi_AB,
                                index_c, index_b, index_a, index_A, index_B, index_C)
         self.setAtomsDef(index_c_name, index_b_name, index_a_name, index_A_name, index_B_name, index_C_name)
-        top = Toplevel(self.parent)
+        top = Toplevel(self.parent)  # <- freeze when open gro file in pymol 1.X
         Output(top, self.bondForceParams, self.atoms_def)
         cmd.set_wizard()
 
