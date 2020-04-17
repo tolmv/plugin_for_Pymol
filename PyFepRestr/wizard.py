@@ -126,7 +126,7 @@ class RestraintWizard(Wizard):
         # this shouldn't actually happen if going through the "do_select"
         if picked_bond:
             self.error = "Error: please select an atom, not a bond."
-            showerror("Error", self.error)
+            showerror(self.parent, "Error", self.error)
             return
         atom_name = self.object_prefix + str(self.pick_count)
         if self.pick_count < 5:
