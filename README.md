@@ -14,7 +14,7 @@ In window 2, the value of the correction to the free energy arising due to restr
 and you will be asked to save the force constants in the Gromacs topology file.![image](images/topol_dG.png)
 
 After that you can see the visualization in PyMol of distance, angles and dihedral angles.
-[image](images/6atoms.png)
+![image](images/6atoms.png)
 
 
 
