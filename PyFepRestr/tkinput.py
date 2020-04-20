@@ -22,25 +22,21 @@ help_1 = """<html>
 <title>Help</title>
 <h1 align="left" style="color: Black">QuickStart</h1>
 <h2 align="left" style="color: Black">Unit Button (kJ or kCal)</h2>
-
 <body>
 You can choose the desired unit of measurement.</body>
-
 <h2 align="left" style="color: Black">Exit</h2>
 <body>
 Exit the program.
 </body>
-
 <h2 align="left" style="color: Black"> Text Fields</h2>
-
 <body>
  K are the force constants of the harmonic restraints for the one distance (raA),<br>
- two angle (θa and θA), and three dihedral (φba, φaA, and φAB) restraints. Temp and K values must be > 0.<br>
- The value is in the range of 5-50 kCal/mol/rad<sup>2</sup> (or kCal/mol/Å<sup>2</sup> are acceptable.<br>
- Recommended value is 10 kCal/mol/rad<sup>2</sup> (or kCal/mol/Å<sup>2</sup>.<br>
- 
+ two angle (&theta;<sub>a</sub> and &theta;<sub>A</sub>), and three dihedral (&phi;<sub>ba</sub>, &phi;<sub>aA</sub>, and &phi;<sub>AB</sub>) restraints. Temp and K values must be > 0.<br>
+ The value is in the range of 5-50 kCal/mol/rad<sup>2</sup> (or kCal/mol/&#8491<sup>2</sup>) are acceptable.<br>
+ Recommended value is 10 kCal/mol/rad<sup>2</sup> (or kCal/mol/&#8491<sup>2</sup>).<br>
+
  <h2 align="left" style="color: Black"> Next Button</h2>
- 
+
  On the next step you choice six atoms (3 for ligand (c-b-a) and 3 for protein (A-B-C)).<br>
  Sequence of selection is c-b-a-A-B-C or C-B-A-a-b-c.
  </body>
