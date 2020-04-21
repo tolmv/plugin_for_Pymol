@@ -4,7 +4,7 @@ PyFepRestr
 
 Short Description
 -----------------
-PyFepRestr is a plug-in designed to set restraints on ligand atoms in the active center of a protein, as suggested by Boresch et al. \[1]  and used in free energy calculations with the Gromacs molecular dynamics program [2]. The plug-in allows you to determine from the coordinates of three ligand atoms and three protein atoms, the interatomic distance, the two angles between bonds and the three dihedral angles used in the Boresch formula  as well as write their values ​​to the Gromacs topology file. The coordinates of the protein-ligand complex can be obtained either experimentally using X-ray crystallography or NMR, or by modeling, for example, docking. At the beginning of the work, it is necessary to indicate in Table 1 the values ​​of the force constants and temperatures necessary for calculating the free energy corrections according to the Boresch formula \[1].
+PyFepRestr is a plug-in designed to set restraints on ligand atoms in the active center of a protein, as suggested by Boresch et al. \[1]  and used in free energy calculations with the Gromacs molecular dynamics program [2]. The plug-in allows you to determine from the coordinates of three ligand atoms and three protein atoms, the inter-atomic distance, the two angles between bonds and the three dihedral angles used in the Boresch formula  as well as write their values to the Gromacs topology file. The coordinates of the protein-ligand complex can be obtained either experimentally using X-ray crystallography or NMR, or by modeling, for example, docking. At the beginning of the work, it is necessary to indicate in Table 1 the values of the force constants and temperatures necessary for calculating the free energy corrections according to the Boresch formula \[1].
 
 ![image](images/f_const.png)
 
@@ -21,7 +21,7 @@ After that you can see the visualization in PyMol of distance, angles and dihedr
 
 Theory
 ------------------
-The use of restraints is important in Alchemical Free Energy calculations as it prevents the ligand from leaving the protein binding pocket while it is not interacting with the environment \[4]. The set of restraints, proposed by Boresch et al. \[1],not only allows to keep the ligand in a specific orientation relative to the binding pocket, but also provides an analytical solution for corresponding ΔG component. This set of restraints needs to be harmonic and is comprised by one distance, two angles, and three dihedrals, to be applied between three atoms of the ligand and three of the protein, as shown in Fig.1
+The use of restraints is important in Alchemical Free Energy calculations as it prevents the ligand from leaving the protein binding pocket while it is not interacting with the environment \[4]. The set of restraints, proposed by Boresch et al. \[1], not only allows to keep the ligand in a specific orientation relative to the binding pocket, but also provides an analytical solution for corresponding ΔG component. This set of restraints needs to be harmonic and is comprised by one distance, two angles, and three dihedral angles, to be applied between three atoms of the ligand and three of the protein, as shown in Fig.1
 
 ![image](images/restraints.png)
 
@@ -103,9 +103,8 @@ To install and use the plugin you need to have version PyMol 1.5.0.6 or later. T
 References
 ----------
 1. Boresch S, Tettinger F, Leitgeb M, Karplus M. Absolute Binding Free Energies: A Quantitative Approach for Their Calculation. *J. Phys. Chem. B* 2003, 107, 35, 9535-9551
-2. DeLano, W. L. (2002). PyMOL. DeLano Scientific, San Carlos, CA, 700.
-3. van der Spoel, et al. (2005). *J. Comput. Chem.* **26:** 1701-1718.
+2. van der Spoel, et al. (2005). *J. Comput. Chem.* **26:** 1701-1718.
+3. DeLano, W. L. (2002). PyMOL. DeLano Scientific, San Carlos, CA, 700.
 4. Aldeghi M, Bluck JP, Biggin PC. Absolute Alchemical Free Energy Calculations
-  for Ligand Binding: A Beginner's Guide. *Methods Mol Biol.* 2018;1762:199-232. doi:
-  10.1007/978-1-4939-7756-7_11. PubMed PMID: 29594774.
-  
+     for Ligand Binding: A Beginner's Guide. *Methods Mol Biol.* 2018;1762:199-232
+
