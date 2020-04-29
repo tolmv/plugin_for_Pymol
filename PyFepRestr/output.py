@@ -7,16 +7,17 @@ import webbrowser
 from sys import platform
 
 try:
-    from Tkinter import BooleanVar, Radiobutton, Label, Button, Text, END, Toplevel
-    from tkFileDialog import askopenfilename
+    from Tkinter import BooleanVar, OptionMenu, Frame, Radiobutton, StringVar, Label, Button, Text, END, Toplevel, WORD, \
+        Scrollbar, LEFT, RIGHT, Y
+    from tkFileDialog import askopenfilename, asksaveasfilename
     from tkFont import Font
     from tkMessageBox import showerror
 except ImportError:
-    from tkinter import BooleanVar, Radiobutton, Label, Button, Text, END, Toplevel
-    from tkinter.filedialog import askopenfilename
+    from tkinter import BooleanVar, OptionMenu, Frame, Radiobutton, StringVar, Label, Button, Text, END, Toplevel, WORD, \
+        Scrollbar, LEFT, RIGHT, Y
+    from tkinter.filedialog import askopenfilename, asksaveasfilename
     from tkinter.font import Font
     from tkinter.messagebox import showerror
-
 
 help_2 = """<html>
 <title>Help</title>
@@ -77,6 +78,54 @@ def calc_dG(T, r_aA, th_a, th_A, K_r_aA, K_th_a, K_th_A, K_phi_ba, K_phi_aA, K_p
         )
     )
     return dG
+
+
+class SrollViewer(Toplevel):
+    def __init__(self, master, title, text):
+        Toplevel.__init__(self, master=master)
+        self.title(title)
+        fra = Frame(self)
+        fra.grid(row=0, column=0, pady=5, padx=5)
+        self.tx = Text(fra, width=130, height=20, wrap=WORD)
+        scr = Scrollbar(fra, command=self.tx.yview)
+        self.tx.configure(yscrollcommand=scr.set)
+        self.tx.pack(side=LEFT)
+        scr.pack(side=RIGHT, fill=Y)
+        self.tx.bind('<Enter>', lambda e: self._bound_to_mousewheel(e, self.tx))
+        self.tx.bind('<Leave>', self._unbound_to_mousewheel)
+        self.tx.insert(END, text)
+        self.tx.configure(state='disabled')
+        if platform == "darwin":
+            button_font = Font(family='Arial', size=15)
+        else:
+            button_font = Font(font=Button()["font"])
+        closeTopolPrevB = Button(self, text='Exit', bg='red', command=self.destroy, font=button_font)
+        closeTopolPrevB.grid(row=1, column=0, pady=5)
+
+    def _bound_to_mousewheel(self, event, tx):
+        _ = event
+        self.bind_all('<MouseWheel>', lambda e: self._on_mousewheel(e, tx))
+        self.bind_all('<Button-4>', lambda e: self._on_mousewheel(e, tx))
+        self.bind_all('<Button-5>', lambda e: self._on_mousewheel(e, tx))
+        self.bind_all('<Up>', lambda e: self._on_mousewheel(e, tx))
+        self.bind_all('<Down>', lambda e: self._on_mousewheel(e, tx))
+
+    def _unbound_to_mousewheel(self, event):
+        _ = event
+        self.unbind_all('<MouseWheel>')
+        self.unbind_all('<Button-4>')
+        self.unbind_all('<Button-5>')
+        self.unbind_all('<Up>')
+        self.unbind_all('<Down>')
+
+    @staticmethod
+    def _on_mousewheel(event, tx):
+        if event.num == 4 or event.keysym == 'Up':
+            tx.yview_scroll(-1, 'units')
+        elif event.num == 5 or event.keysym == 'Down':
+            tx.yview_scroll(1, 'units')
+        else:
+            tx.yview_scroll(int(-1 * (event.delta / 120)), 'units')
 
 
 class Output(object):
@@ -140,14 +189,17 @@ class Output(object):
         helpProgr = Button(self.main, text=' ? ', bg='#ffb3fe', command=self.getHelp, font=self.button_font)
         helpProgr.grid(row=4, column=0, padx=5, pady=5)
 
-        name3 = Label(self.main, text='Gromacs topology file:', font=self.label_font)
-        name3.grid(row=3, column=0, padx=5, pady=5)
+        self.select_prog = StringVar()
+        self.select_prog.set("Gromacs topology file")
+        prog_list = ["Gromacs topology file", "NAMD Colvars"]
+        menu = OptionMenu(self.main, self.select_prog, *prog_list)
+        menu.grid(row=3, column=0, padx=5, pady=5)
 
-        previewButton = Button(self.main, text='Preview', bg='gray', command=self.ViewGromacsTopol,
+        previewButton = Button(self.main, text='Preview', bg='gray', command=self.ViewRestr,
                                font=self.button_font)
         previewButton.grid(row=3, column=2, padx=5, pady=5)
 
-        saveFileButton = Button(self.main, text='Save in...', bg='gray', command=self.writeTopolFile,
+        saveFileButton = Button(self.main, text='Save', bg='gray', command=self.writeFile,
                                 font=self.button_font)
         saveFileButton.grid(row=3, column=3, padx=5, pady=5)
 
@@ -175,29 +227,40 @@ class Output(object):
             f.write(help_2)
         webbrowser.open(url)
 
-    def ViewGromacsTopol(self):
-        top = Toplevel(self.main)
-        top.title("topol.top")
-        restraints = self.createGronacsRestr()
-        tx = Text(top, width=130, height=20)
-        tx.grid(row=0, column=0, pady=5, padx=5)
-        tx.insert(END, restraints)
-        tx.configure(state='disabled')
-        closeTopolPrevB = Button(top, text='Exit', bg='red', command=top.destroy, font=self.button_font)
-        closeTopolPrevB.grid(row=1, column=0, pady=5)
+    def ViewRestr(self):
+        if self.select_prog.get() == "Gromacs topology file":
+            restraints = self.createGronacsRestr()
+            SrollViewer(self.main, "topol.top", restraints)
+        elif self.select_prog.get() == "NAMD Colvars":
+            restraints = self.createNAMDRestraints()
+            SrollViewer(self.main, "Restraints.in", restraints)
 
-    def writeTopolFile(self):
-        topolFile = askopenfilename(initialdir="/", title="Select file",
-                                    filetypes=(("Topology files", "*.top"), ("all files", "*.*")))
+    def writeFile(self):
+        if self.select_prog.get() == "Gromacs topology file":
+            topolFile = askopenfilename(initialdir="./", title="Select file",
+                                        filetypes=(("Topology files", "*.top"),
+                                                   ("all files", "*.*")))
+            restraints = self.createGronacsRestr()
+        elif self.select_prog.get() == "NAMD Colvars":
+            topolFile = asksaveasfilename(initialdir="./", title="Save as..",
+                                          filetypes=(("in files", "*.in"),
+                                                     ("Tcl files", "*.tcl"),
+                                                     ("all files", "*.*")),
+                                          initialfile="Restraints.in",
+                                          defaultextension='.in')
+            restraints = self.createNAMDRestraints()
         if topolFile is None:
-            showerror("Error", "Topology file is not selected!")
+            showerror("Error", "File is not selected!")
             return
-        restraints = self.createGronacsRestr()
         try:
-            with open(topolFile, 'at') as f:
-                f.write("\n\n" + restraints)
+            if self.select_prog.get() == "Gromacs topology file":
+                with open(topolFile, 'at') as f:
+                    f.write("\n\n" + restraints)
+            elif self.select_prog.get() == "NAMD Colvars":
+                with open(topolFile, 'wt') as f:
+                    f.write(restraints)
         except IOError:
-            showerror("Error", "Topology file {:s} is not accessible for writing!".format(topolFile))
+            showerror("Error", "File {:s} is not accessible for writing!".format(topolFile))
 
     def createGronacsRestr(self):
         restraints = ("[ intermolecular_interactions ]\n"
@@ -250,3 +313,204 @@ class Output(object):
             self.dG_on_kCal  # 28
         )
         return restraints
+
+    def createNAMDRestraints(self):
+        preambula_1 = ("Colvarstrajfrequency    500\n"
+                       "Colvarsrestartfrequency 500\n"
+                       "\n"
+                       "\n"
+                       "#############################################################\n"
+                       "# ALL COLVARS RESTRAINED\n"
+                       "#############################################################\n"
+                       "# COLVARS DEFINITIONS\n"
+                       "#############################################################\n"
+                       "\n")
+        colvarR_aA = ("# {:s} - {:s}\n"
+                      "colvar {{\n"
+                      "    name R\n"
+                      "    width 1.0\n"
+                      "    lowerboundary 0.0\n"
+                      "    upperboundary 40.0\n"
+                      "    distance {{\n"
+                      "        forceNoPBC   yes\n"
+                      "        group1 {{\n"
+                      "            atomnumbers {{ {:d} }}\n"
+                      "        }}\n"
+                      "        group2 {{\n"
+                      "            atomnumbers {{ {:d} }}\n"
+                      "        }}\n"
+                      "    }}\n"
+                      "}}\n").format(self.atoms_def['index_a'],
+                                     self.atoms_def['index_A'],
+                                     self.bondForceParams['index_a'],
+                                     self.bondForceParams['index_A'])
+        colvarTh_a = ("# {:s} - {:s} - {:s}\n"
+                      "colvar {{\n"
+                      "    name th_a\n"
+                      "    width 1.0\n"
+                      "    lowerboundary 0.0\n"
+                      "    upperboundary 180.0\n"
+                      "    angle {{\n"
+                      "        group1 {{\n"
+                      "            atomnumbers {{ {:d} }}\n"
+                      "        }}\n"
+                      "        group2 {{\n"
+                      "            atomnumbers {{ {:d} }}\n"
+                      "        }}\n"
+                      "        group3 {{\n"
+                      "            atomnumbers {{ {:d} }}\n"
+                      "        }}\n"
+                      "    }}\n"
+                      "}}\n").format(self.atoms_def['index_b'],
+                                     self.atoms_def['index_a'],
+                                     self.atoms_def['index_A'],
+                                     self.bondForceParams['index_b'],
+                                     self.bondForceParams['index_a'],
+                                     self.bondForceParams['index_A'])
+        colvarTh_A = ("# {:s} - {:s} - {:s}\n"
+                      "colvar {{\n"
+                      "    name th_A\n"
+                      "    width 1.0\n"
+                      "    lowerboundary 0.0\n"
+                      "    upperboundary 180.0\n"
+                      "    angle {{\n"
+                      "        group1 {{\n"
+                      "            atomnumbers {{ {:d} }}\n"
+                      "        }}\n"
+                      "        group2 {{\n"
+                      "            atomnumbers {{ {:d} }}\n"
+                      "        }}\n"
+                      "        group3 {{\n"
+                      "            atomnumbers {{ {:d} }}\n"
+                      "        }}\n"
+                      "    }}\n"
+                      "}}\n").format(self.atoms_def['index_a'],
+                                     self.atoms_def['index_A'],
+                                     self.atoms_def['index_B'],
+                                     self.bondForceParams['index_a'],
+                                     self.bondForceParams['index_A'],
+                                     self.bondForceParams['index_B'])
+        colvarPhi_ba = ("# {:s} - {:s} - {:s} - {:s}\n"
+                        "colvar {{\n"
+                        "    name phi_ba\n"
+                        "    width 1.0\n"
+                        "    lowerboundary -180.0\n"
+                        "    upperboundary  180.0\n"
+                        "    dihedral {{\n"
+                        "        group1 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "        group2 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "        group3 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "        group4 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "    }}\n"
+                        "}}\n").format(self.atoms_def['index_c'],
+                                       self.atoms_def['index_b'],
+                                       self.atoms_def['index_a'],
+                                       self.atoms_def['index_A'],
+                                       self.bondForceParams['index_c'],
+                                       self.bondForceParams['index_b'],
+                                       self.bondForceParams['index_a'],
+                                       self.bondForceParams['index_A'])
+        colvarPhi_aA = ("# {:s} - {:s} - {:s} - {:s}\n"
+                        "colvar {{\n"
+                        "    name phi_aA\n"
+                        "    width 1.0\n"
+                        "    lowerboundary -180.0\n"
+                        "    upperboundary  180.0\n"
+                        "    dihedral {{\n"
+                        "        group1 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "        group2 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "        group3 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "        group4 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "    }}\n"
+                        "}}\n").format(self.atoms_def['index_b'],
+                                       self.atoms_def['index_a'],
+                                       self.atoms_def['index_A'],
+                                       self.atoms_def['index_B'],
+                                       self.bondForceParams['index_b'],
+                                       self.bondForceParams['index_a'],
+                                       self.bondForceParams['index_A'],
+                                       self.bondForceParams['index_B'])
+        colvarPhi_AB = ("# {:s} - {:s} - {:s} - {:s}\n"
+                        "colvar {{\n"
+                        "    name phi_AB\n"
+                        "    width 1.0\n"
+                        "    lowerboundary -180.0\n"
+                        "    upperboundary  180.0\n"
+                        "    dihedral {{\n"
+                        "        group1 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "        group2 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "        group3 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "        group4 {{\n"
+                        "            atomnumbers {{ {:d} }}\n"
+                        "        }}\n"
+                        "    }}\n"
+                        "}}\n").format(self.atoms_def['index_a'],
+                                       self.atoms_def['index_A'],
+                                       self.atoms_def['index_B'],
+                                       self.atoms_def['index_C'],
+                                       self.bondForceParams['index_a'],
+                                       self.bondForceParams['index_A'],
+                                       self.bondForceParams['index_B'],
+                                       self.bondForceParams['index_C'])
+        preambula_2 = ("#############################################################\n"
+                       "# RESTRAINTS AND PMF\n"
+                       "#############################################################\n")
+        alcR = ("harmonic {{\n"
+                "   colvars R\n"
+                "   centers {:.1f}\n"
+                "   forceConstant {:.1f}\n"
+                "}}\n").format(10 * self.bondForceParams['r_aA'], kJ_to_kCal(self.bondForceParams['K_r_aA'] / 100.0))
+        alcTh_a = ("harmonic {{\n"
+                   "   colvars th_a\n"
+                   "   centers {:.1f}\n"
+                   "   forceConstant {:.1f}\n"
+                   "}}\n").format(self.bondForceParams['th_a'],
+                                  kJ_to_kCal(self.bondForceParams['K_th_a'] * math.pi / 180.0))
+        alcTh_A = ("harmonic {{\n"
+                   "   colvars th_A\n"
+                   "   centers {:.1f}\n"
+                   "   forceConstant {:.1f}\n"
+                   "}}\n").format(self.bondForceParams['th_A'],
+                                  kJ_to_kCal(self.bondForceParams['K_th_A'] * math.pi / 180.0))
+        alcPhi_ba = ("harmonic {{\n"
+                     "   colvars phi_ba\n"
+                     "   centers {:.1f}\n"
+                     "   forceConstant {:.1f}\n"
+                     "}}\n").format(self.bondForceParams['phi_ba'],
+                                    kJ_to_kCal(self.bondForceParams['K_phi_ba'] * math.pi / 180.0))
+        alcPhi_aA = ("harmonic {{\n"
+                     "   colvars phi_aA\n"
+                     "   centers {:.1f}\n"
+                     "   forceConstant {:.1f}\n"
+                     "}}\n").format(self.bondForceParams['phi_aA'],
+                                    kJ_to_kCal(self.bondForceParams['K_phi_aA'] * math.pi / 180.0))
+        alcPhi_AB = ("harmonic {{\n"
+                     "   colvars phi_AB\n"
+                     "   centers {:.1f}\n"
+                     "   forceConstant {:.1f}\n"
+                     "}}\n").format(self.bondForceParams['phi_AB'],
+                                    kJ_to_kCal(self.bondForceParams['K_phi_AB'] * math.pi / 180.0))
+        return (preambula_1 + colvarR_aA + colvarTh_a + colvarTh_A + colvarPhi_ba + colvarPhi_aA + colvarPhi_AB +
+                preambula_2 + alcR + alcTh_a + alcTh_A + alcPhi_ba + alcPhi_aA + alcPhi_AB)
