@@ -10,7 +10,7 @@ PyFepRestr is a plug-in designed to set restraints on ligand atoms in the active
 
 Then, in the visualization window of the PyMol [3] structure, it is necessary to select using the “mouse” manipulator three ligand atoms and three protein atoms, to which restrictions should be applied.![image](images/choose5.png)
 
-In window 2, the value of the correction to the free energy arising due to restraints will be displayed,![image](images/output2.tiff) 
+In window 2, the value of the correction to the free energy arising due to restraints will be displayed,![image](images/output2.png) 
 
 and you will be asked to save the force constants in the Gromacs topology file.![image](images/res_topol.png)
 
