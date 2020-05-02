@@ -23,7 +23,15 @@ help_2 = """<html>
 <title>Help</title>
 <h1 align="left" style="color: Black">QuickStart</h1>
 
-<h2 align="left" style="color: Black"> Gromacs topology</h2>
+<h2 align="left" style="color: Black">Option Menu(Gromacs or NAMD)</h2>
+
+<h3 align="left" style="color: Black"> Gromacs topology file</h4>
+If you use Gromacs package, click on this button.
+  After that choose your topology file(.top)
+
+<h3 align="left" style="color: Black"> NAMD Colvars</h4>
+  If you use NAMD package, click on this button.
+    After that choose your restraints file(.in)
 
 <h3 align="left" style="color: Black"> Preview</h4>
 
@@ -34,7 +42,7 @@ Preview an additional section in the topology file.
 <h3 align="left" style="color: Black"> Write</h4>
 
 <body>
-Select the topology file and writes all the indices of the atoms, <br>
+After selecting the MD platform and topology file writes all the indices of the atoms, <br>
 force constants, distances, angles and dihedral angles into it,<br>
 where A is &lambda;<sub>restr</sub> =  0 and B is &lambda;<sub>restr</sub> =  1. <br>
 The bonded-lambdas vector was interpolated <br>
