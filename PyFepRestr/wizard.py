@@ -197,3 +197,58 @@ class RestraintWizard(Wizard):
         self.bondForceParams['index_A'] = args[9]
         self.bondForceParams['index_B'] = args[10]
         self.bondForceParams['index_C'] = args[11]
+
+class RestraintWizardTwo(RestraintWizard):
+    def __init__(self, parent, bondForceParams, atoms_def):
+        RestraintWizard.__init__(self, parent, bondForceParams, atoms_def)
+        self.pick_count = 2
+
+    def get_prompt(self):
+        self.prompt = None
+        if self.pick_count == 2:
+            self.prompt = ['Please click on the first (a) atom...']
+        elif self.pick_count == 3:
+            self.prompt = ['Please click on the second (A) atom...']
+        return self.prompt
+    def do_pick(self, picked_bond):
+
+        # this shouldn't actually happen if going through the "do_select"
+        if picked_bond:
+            self.error = "Error: please select an atom, not a bond."
+            showerror(self.parent, "Error", self.error)
+            return
+        atom_name = self.object_prefix + str(self.pick_count)
+        if self.pick_count == 2:
+            self.pickNextAtom(atom_name)
+        else:
+            self.pickNextAtom(atom_name)
+            self.doFinish()
+
+    def pickNextAtom(self, atom_name):
+        # transfer the click selection to a named selection
+        cmd.select(atom_name, "(pk1)")
+        # delete the click selection
+        cmd.unpick()
+        # using the magic of indicate, highlight stuff
+        indicate_selection = "_indicate" + self.object_prefix
+        cmd.select(indicate_selection, atom_name)
+
+        psico.select_sspick(atom_name, 'pw' + str(self.pick_count))
+
+        print(indicate_selection)
+        cmd.enable(indicate_selection)
+        view = cmd.get_view()
+        cmd.create(self.indexes_list[self.pick_count], self.object_prefix + str(self.pick_count))
+        cmd.set_view(view)
+        cmd.set("sphere_scale", '0.3', self.indexes_list[self.pick_count])
+        cmd.show_as('spheres', self.indexes_list[self.pick_count])
+        if self.pick_count == 2:
+            cmd.color("red", self.indexes_list[self.pick_count])
+        elif self.pick_count == 3:
+            cmd.color("black", self.indexes_list[self.pick_count])
+        else:
+            return
+        self.pick_count += 1
+        self.error = None
+        # necessary to force update of the prompt
+        cmd.refresh_wizard()
