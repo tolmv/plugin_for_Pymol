@@ -102,8 +102,13 @@ Software Requirement
 
 To install and use the plugin you need to have version PyMol 1.5.0.6 or later. This plugin can work with PyMol 2.X  Also you need to have:
 * Version Gromacs 2016 series or later. 
-* NAMD 
-Download new version [PyMol](https://pymol.org/2/?#download) and [Gromacs](http://manual.gromacs.org/documentation/).  
+* NAMD 2.9 or later
+
+
+Download new version:
+* [PyMol](https://pymol.org/2/?#download)
+* [Gromacs](http://manual.gromacs.org/documentation/)
+* [NAMD](https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=NAMD)
 
 
 References
