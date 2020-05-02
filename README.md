@@ -14,6 +14,9 @@ In window 2, the value of the correction to the free energy arising due to restr
 
 and you will be asked to save the force constants in the Gromacs topology file.![image](images/res_topol.png)
 
+or to save the force constaints in NAMD file.
+![image](image/NAMD.png)
+
 After that you can see the visualization in PyMol of distance, angles and dihedral angles.
 ![image](images/atoms6.png)
 
@@ -97,7 +100,10 @@ After following the above instructions, you need to search the plugin in **Plugi
 Software Requirement
 ----------
 
-To install and use the plugin you need to have version PyMol 1.5.0.6 or later. This plugin can work with PyMol 2.X  Also you need to have version Gromacs 2016 series or later. Download new version [PyMol](https://pymol.org/2/?#download) and [Gromacs](http://manual.gromacs.org/documentation/).  
+To install and use the plugin you need to have version PyMol 1.5.0.6 or later. This plugin can work with PyMol 2.X  Also you need to have:
+*Version Gromacs 2016 series or later. 
+*NAMD 
+Download new version [PyMol](https://pymol.org/2/?#download) and [Gromacs](http://manual.gromacs.org/documentation/).  
 
 
 References
