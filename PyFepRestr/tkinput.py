@@ -7,11 +7,11 @@ from pymol import cmd
 from sys import platform
 
 try:
-    from Tkinter import BooleanVar,OptionMenu, Radiobutton, Entry, StringVar, Label, Button, Toplevel, W
+    from Tkinter import BooleanVar, StringVar, OptionMenu, Radiobutton, Entry, Label, Button, Toplevel, W
     from tkFont import Font
     from tkMessageBox import showinfo
 except ImportError:
-    from tkinter import BooleanVar,OptionMenu, Radiobutton, Entry, StringVar, Label, Button, Toplevel, W
+    from tkinter import BooleanVar, StringVar, OptionMenu, Radiobutton, Entry, Label, Button, Toplevel, W
     from tkinter.font import Font
     from tkinter.messagebox import showinfo
 
@@ -35,15 +35,8 @@ Exit the program.
  The value is in the range of 5-50 kCal/mol/rad<sup>2</sup> (or kCal/mol/&#8491<sup>2</sup>) are acceptable.<br>
  Recommended value is 10 kCal/mol/rad<sup>2</sup> (or kCal/mol/&#8491<sup>2</sup>).<br>
 
- <h2 align="left" style="color: Black">Option Menu</h2>
-  <h3 align="left" style="color: Black">Select 6 atoms</h3>
- You need to select 6 atoms to calculate the Boresch formula.
- <h3 align="left" style="color: Black">Select 2 atoms</h3>
- You need to select atom a and atom A to calculate the Boresch formula.
- After that algorithm choose secondary atoms.
-
-
  <h2 align="left" style="color: Black"> Next Button</h2>
+
  On the next step you choice six atoms (3 for ligand (c-b-a) and 3 for protein (A-B-C)).<br>
  Sequence of selection is c-b-a-A-B-C or C-B-A-a-b-c.
  </body>
@@ -162,7 +155,7 @@ class Restraints(object):
         self.bondForceParams['K_phi_aA'] = self.validated_values[5]  # force constant for dihedral (kJ/mol/rad^2)
         self.bondForceParams['K_phi_AB'] = self.validated_values[6]  # force constant for dihedral (kJ/mol/rad^2)
         showinfo('Info', 'Now choose the atoms you need')
-        if self.select_prog.get() == 'Select 6 atoms':
+        if self.select_atoms.get() == 'Select 6 atoms':
             wiz = RestraintWizard(self.parent, self.bondForceParams, self.atoms_def)
         else:
             wiz = RestraintWizardTwo(self.parent, self.bondForceParams, self.atoms_def)

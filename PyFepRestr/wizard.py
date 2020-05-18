@@ -50,9 +50,9 @@ class RestraintWizard(Wizard):
         self.bondForceParams = bondForceParams
         # some attributes to do with picking
         self.pick_count = 0
+        self.pick_count_max = 5
         self.object_prefix = "pw"
         self.error = None
-        self.iswait = True
         self.selection_mode = cmd.get_setting_legacy("mouse_selection_mode")
         cmd.set("mouse_selection_mode", 0)  # set selection mode to atomic
         cmd.deselect()
@@ -92,7 +92,7 @@ class RestraintWizard(Wizard):
     def do_select(self, name):
         # "edit" only this atom, and not others with the object prefix
         try:
-            cmd.edit("%s and not %s*" % (name, self.object_prefix))
+            cmd.edit("{:s} and not {:s}*".format(name, self.object_prefix))
             self.do_pick(0)
         except CmdException:
             showerror(self.parent, "Error", "Selection Error!")
@@ -129,7 +129,7 @@ class RestraintWizard(Wizard):
             showerror(self.parent, "Error", self.error)
             return
         atom_name = self.object_prefix + str(self.pick_count)
-        if self.pick_count < 5:
+        if self.pick_count < self.pick_count_max:
             self.pickNextAtom(atom_name)
         else:
             self.pickNextAtom(atom_name)
@@ -201,7 +201,9 @@ class RestraintWizard(Wizard):
 class RestraintWizardTwo(RestraintWizard):
     def __init__(self, parent, bondForceParams, atoms_def):
         RestraintWizard.__init__(self, parent, bondForceParams, atoms_def)
+        # some attributes to do with picking
         self.pick_count = 2
+        self.pick_count_max = 3
 
     def get_prompt(self):
         self.prompt = None
@@ -210,6 +212,16 @@ class RestraintWizardTwo(RestraintWizard):
         elif self.pick_count == 3:
             self.prompt = ['Please click on the second (A) atom...']
         return self.prompt
+
+    def do_select(self, name):
+        # "edit" only this atom, and not others with the object prefix
+        try:
+            cmd.edit("{:s} and not {:s}*".format(name, self.object_prefix))
+            self.do_pick(0)
+        except CmdException:
+            showerror(self.parent, "Error", "Selection Error!")
+            self.reset()
+
     def do_pick(self, picked_bond):
 
         # this shouldn't actually happen if going through the "do_select"
@@ -218,37 +230,62 @@ class RestraintWizardTwo(RestraintWizard):
             showerror(self.parent, "Error", self.error)
             return
         atom_name = self.object_prefix + str(self.pick_count)
-        if self.pick_count == 2:
+        if self.pick_count < self.pick_count_max:
             self.pickNextAtom(atom_name)
         else:
             self.pickNextAtom(atom_name)
             self.doFinish()
 
-    def pickNextAtom(self, atom_name):
-        # transfer the click selection to a named selection
-        cmd.select(atom_name, "(pk1)")
-        # delete the click selection
-        cmd.unpick()
-        # using the magic of indicate, highlight stuff
-        indicate_selection = "_indicate" + self.object_prefix
-        cmd.select(indicate_selection, atom_name)
+    def doFinish(self):
+        self.selectLigand()
+        self.selectProt()
+        RestraintWizard.doFinish(self)
 
-        psico.select_sspick(atom_name, 'pw' + str(self.pick_count))
+    def selectLigand(self):
+        index_a = cmd.id_atom("pw2")
+        index_A = cmd.id_atom("pw3")
+        cmd.select("neig", "neighbor id {:d} and not (hydrogens or id {:d})".format(index_a, index_A))
+        atoms = cmd.get_model("neig")
+        cmd.delete("neig")
+        at = atoms.atom[0]
+        index_b = at.id
+        cmd.select("pw1", "id {:d}".format(index_b))
+        self.createAtomObj(1)
+        cmd.select("neig", "neighbor id {:d} and not (hydrogens or id {:d} or id {:d})".format(
+            index_b, index_a, index_A))
+        atoms = cmd.get_model("neig")
+        cmd.delete("neig")
+        at = atoms.atom[0]
+        index_c = at.id
+        cmd.select("pw0", "id {:d}".format(index_c))
+        self.createAtomObj(0)
 
-        print(indicate_selection)
-        cmd.enable(indicate_selection)
+    def selectProt(self):
+        index_a = cmd.id_atom("pw2")
+        index_A = cmd.id_atom("pw3")
+        cmd.select("neig", "neighbor id {:d} and not (hydrogens or id {:d})".format(index_A, index_a))
+        atoms = cmd.get_model("neig")
+        cmd.delete("neig")
+        at = atoms.atom[0]
+        index_B = at.id
+        cmd.select("pw4", "id {:d}".format(index_B))
+        self.createAtomObj(4)
+        cmd.select("neig", "neighbor id {:d} and not (hydrogens or id {:d} or id {:d})".format(
+            index_B, index_a, index_A))
+        atoms = cmd.get_model("neig")
+        cmd.delete("neig")
+        at = atoms.atom[0]
+        index_C = at.id
+        cmd.select("pw5", "id {:d}".format(index_C))
+        self.createAtomObj(5)
+
+    def createAtomObj(self, number):
         view = cmd.get_view()
-        cmd.create(self.indexes_list[self.pick_count], self.object_prefix + str(self.pick_count))
+        cmd.create(self.indexes_list[number], self.object_prefix + str(number))
         cmd.set_view(view)
-        cmd.set("sphere_scale", '0.3', self.indexes_list[self.pick_count])
-        cmd.show_as('spheres', self.indexes_list[self.pick_count])
-        if self.pick_count == 2:
-            cmd.color("red", self.indexes_list[self.pick_count])
-        elif self.pick_count == 3:
-            cmd.color("black", self.indexes_list[self.pick_count])
+        cmd.set("sphere_scale", '0.3', self.indexes_list[number])
+        cmd.show_as('spheres', self.indexes_list[number])
+        if self.pick_count < 3:
+            cmd.color("red", self.indexes_list[number])
         else:
-            return
-        self.pick_count += 1
-        self.error = None
-        # necessary to force update of the prompt
-        cmd.refresh_wizard()
+            cmd.color("green", self.indexes_list[number])

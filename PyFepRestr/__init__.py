@@ -5,15 +5,13 @@ PyFepRestr is a plug-in designed to set restraints on ligand atoms in the active
 as suggested by Boresch et al. and used in free energy calculations with the Gromacs molecular dynamics program.
 The plug-in allows you to determine from the coordinates of three ligand atoms and three protein atoms,
 the interatomic distance, the two angles between bonds and the three dihedral angles used in the Boresch formula
-as well as write their values​to the Gromacs topology file.
+as well as write their values​to the Gromacs topology or NAMD Restraints.in file.
 (c) Alexander Lashkov, Ivan Tolmachev, Sergey Rubinsky
 License:MIT License
 """
 from __future__ import absolute_import
 
-from .output import Output
 from .tkinput import Restraints
-from .wizard import RestraintWizard
 
 
 def __init_plugin__(app):
