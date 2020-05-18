@@ -213,29 +213,6 @@ class RestraintWizardTwo(RestraintWizard):
             self.prompt = ['Please click on the second (A) atom...']
         return self.prompt
 
-    def do_select(self, name):
-        # "edit" only this atom, and not others with the object prefix
-        try:
-            cmd.edit("{:s} and not {:s}*".format(name, self.object_prefix))
-            self.do_pick(0)
-        except CmdException:
-            showerror(self.parent, "Error", "Selection Error!")
-            self.reset()
-
-    def do_pick(self, picked_bond):
-
-        # this shouldn't actually happen if going through the "do_select"
-        if picked_bond:
-            self.error = "Error: please select an atom, not a bond."
-            showerror(self.parent, "Error", self.error)
-            return
-        atom_name = self.object_prefix + str(self.pick_count)
-        if self.pick_count < self.pick_count_max:
-            self.pickNextAtom(atom_name)
-        else:
-            self.pickNextAtom(atom_name)
-            self.doFinish()
-
     def doFinish(self):
         self.selectLigand()
         self.selectProt()
@@ -244,17 +221,36 @@ class RestraintWizardTwo(RestraintWizard):
     def selectLigand(self):
         index_a = cmd.id_atom("pw2")
         index_A = cmd.id_atom("pw3")
-        cmd.select("neig", "neighbor id {:d} and not (hydrogens or id {:d})".format(index_a, index_A))
-        atoms = cmd.get_model("neig")
-        cmd.delete("neig")
+        cmd.select("bounded", "(bound_to id {0:d}) and not "
+                           "(hydrogens or name H* or id {0:d} or id {1:d})".format(index_a, index_A))
+        atoms = cmd.get_model("bounded")
+        cmd.delete("bounded")
+        if not atoms.atom:
+            cmd.select("bounded", "(id {0:d} around 2.2) and not "
+                                  "(hydrogens or name H* or id {0:d} or id {1:d})".format(index_a, index_A))
+            atoms = cmd.get_model("bounded")
+            cmd.delete("bounded")
+        if not atoms.atom:
+            showerror(self.parent, "Error", "Not found atoms bonded or around (a)")
+            self.reset()
         at = atoms.atom[0]
         index_b = at.id
         cmd.select("pw1", "id {:d}".format(index_b))
         self.createAtomObj(1)
-        cmd.select("neig", "neighbor id {:d} and not (hydrogens or id {:d} or id {:d})".format(
+        cmd.select("bounded", "(bound_to id {0:d}) and not "
+                           "(hydrogens or name H* or id {0:d} or id {1:d} or id {2:d})".format(
             index_b, index_a, index_A))
-        atoms = cmd.get_model("neig")
-        cmd.delete("neig")
+        atoms = cmd.get_model("bounded")
+        cmd.delete("bounded")
+        if not atoms.atom:
+            cmd.select("bounded", "(id {0:d} around 2.2) and not "
+                                  "(hydrogens or name H* or id {0:d} or id {1:d} or id {2:d})".format(
+                index_b, index_a, index_A))
+            atoms = cmd.get_model("bounded")
+            cmd.delete("bounded")
+        if not atoms.atom:
+            showerror(self.parent, "Error", "Not found atoms bonded or around (b)")
+            self.reset()
         at = atoms.atom[0]
         index_c = at.id
         cmd.select("pw0", "id {:d}".format(index_c))
@@ -263,17 +259,36 @@ class RestraintWizardTwo(RestraintWizard):
     def selectProt(self):
         index_a = cmd.id_atom("pw2")
         index_A = cmd.id_atom("pw3")
-        cmd.select("neig", "neighbor id {:d} and not (hydrogens or id {:d})".format(index_A, index_a))
-        atoms = cmd.get_model("neig")
-        cmd.delete("neig")
+        cmd.select("bounded", "(bound_to id {0:d}) and not "
+                           "(hydrogens or name H* or id {0:d} or id {1:d})".format(index_A, index_a))
+        atoms = cmd.get_model("bounded")
+        cmd.delete("bounded")
+        if not atoms.atom:
+            cmd.select("bounded", "(id {0:d} around 2.2) and not "
+                                  "(hydrogens or name H* or id {0:d} or id {1:d})".format(index_A, index_a))
+            atoms = cmd.get_model("bounded")
+            cmd.delete("bounded")
+        if not atoms.atom:
+            showerror(self.parent, "Error", "Not found atoms bonded or around (b)")
+            self.reset()
         at = atoms.atom[0]
         index_B = at.id
         cmd.select("pw4", "id {:d}".format(index_B))
         self.createAtomObj(4)
-        cmd.select("neig", "neighbor id {:d} and not (hydrogens or id {:d} or id {:d})".format(
+        cmd.select("bounded", "(bound_to id {0:d}) and not "
+                              "(hydrogens or name H* or id {0:d} or id {1:d} or id {2:d})".format(
             index_B, index_a, index_A))
-        atoms = cmd.get_model("neig")
-        cmd.delete("neig")
+        atoms = cmd.get_model("bounded")
+        cmd.delete("bounded")
+        if not atoms.atom:
+            cmd.select("bounded", "(id {0:d} around 2.2) and not "
+                                  "(hydrogens or name H* or id {0:d} or id {1:d} or id {2:d})".format(
+                index_B, index_a, index_A))
+            atoms = cmd.get_model("bounded")
+            cmd.delete("bounded")
+        if not atoms.atom:
+            showerror(self.parent, "Error", "Not found atoms bonded or around (b)")
+            self.reset()
         at = atoms.atom[0]
         index_C = at.id
         cmd.select("pw5", "id {:d}".format(index_C))
@@ -285,7 +300,7 @@ class RestraintWizardTwo(RestraintWizard):
         cmd.set_view(view)
         cmd.set("sphere_scale", '0.3', self.indexes_list[number])
         cmd.show_as('spheres', self.indexes_list[number])
-        if self.pick_count < 3:
+        if number < 3:
             cmd.color("red", self.indexes_list[number])
         else:
             cmd.color("green", self.indexes_list[number])
