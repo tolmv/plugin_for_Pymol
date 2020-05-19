@@ -35,13 +35,19 @@ Exit the program.
  The value is in the range of 5-50 kCal/mol/rad<sup>2</sup> (or kCal/mol/&#8491<sup>2</sup>) are acceptable.<br>
  Recommended value is 10 kCal/mol/rad<sup>2</sup> (or kCal/mol/&#8491<sup>2</sup>).<br>
 
- <h2 align="left" style="color: Black"> Next Button</h2>
+ <h2 align="left" style="color: Black">Option Menu</h2>
+  <h3 align="left" style="color: Black">Select 6 atoms</h3>
+ You need to select 6 atoms to calculate the Boresch formula.
+ <h3 align="left" style="color: Black">Select 2 atoms</h3>
+ You need to select atom a and atom A to calculate the Boresch formula.
+ After that algorithm choose secondary atoms.
 
+
+ <h2 align="left" style="color: Black"> Next Button</h2>
  On the next step you choice six atoms (3 for ligand (c-b-a) and 3 for protein (A-B-C)).<br>
  Sequence of selection is c-b-a-A-B-C or C-B-A-a-b-c.
  </body>
 </html>
-
 """
 
 
