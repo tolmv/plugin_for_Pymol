@@ -44,8 +44,13 @@ Exit the program.
 
 
  <h2 align="left" style="color: Black"> Next Button</h2>
+ <h3 align="left" style="color: Black">Select 6 atoms</h3>
  On the next step you choice six atoms (3 for ligand (c-b-a) and 3 for protein (A-B-C)).<br>
  Sequence of selection is c-b-a-A-B-C or C-B-A-a-b-c.
+ <h3 align="left" style="color: Black">Select 2 atoms</h3>
+ On the next step you choice two atoms (one for ligand (a) and one for protein (A)).<br>
+ Sequence of selection is a-A or A-a.<br>
+ After that algorithm choose secondary atoms.
  </body>
 </html>
 """
