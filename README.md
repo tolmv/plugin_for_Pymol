@@ -35,6 +35,8 @@ and you will be asked to save the force constants in the Gromacs topology file.!
 or to save the force constaints in NAMD file.
 ![image](images/NAMD.png)
 
+### Final Picture
+
 After that you can see the visualization in PyMol of distance, angles and dihedral angles.
 ![image](images/atoms6.png)
 
