@@ -4,14 +4,23 @@ PyFepRestr
 
 Short Description
 -----------------
-PyFepRestr is a plug-in designed to set restraints on ligand atoms in the active center of a protein, as suggested by Boresch et al. \[1]  and used in free energy calculations with the Gromacs molecular dynamics program [2]. The plug-in allows you to determine from the coordinates of three ligand atoms and three protein atoms, the inter-atomic distance, the two angles between bonds and the three dihedral angles used in the Boresch formula  as well as write their values to the Gromacs topology file. The coordinates of the protein-ligand complex can be obtained either experimentally using X-ray crystallography or NMR, or by modeling, for example, docking. At the beginning of the work, it is necessary to indicate in Table 1 the values of the force constants and temperatures necessary for calculating the free energy corrections according to the Boresch formula \[1].
+PyFepRestr is a plug-in designed to set restraints on ligand atoms in the active center of a protein, as suggested by Boresch et al. \[1]  and used in free energy calculations with the Gromacs molecular dynamics program [2]. The plug-in allows you to determine from the coordinates of three ligand atoms and three protein atoms, the inter-atomic distance, the two angles between bonds and the three dihedral angles used in the Boresch formula  as well as write their values to the Gromacs topology file. The coordinates of the protein-ligand complex can be obtained either experimentally using X-ray crystallography or NMR, or by modeling, for example, docking.
+
+At the beginning of the work, it is necessary to indicate in Table 1 the values of the force constants and temperatures necessary for calculating the free energy corrections according to the Boresch formula \[1].
+You need choice in Option Menu method of select atoms:
+* Select 6 Atoms
 
 ![image](images/select6.png)
 
+Then, in the visualization window of the PyMol [3] structure, it is necessary to select using the “mouse” manipulator three ligand atoms and three protein atoms, to which restrictions should be applied.![image](images/choose5.png)
+
+* Select 2 Atoms
+
 ![image](images/select2.png)
 
+In the visualization window of the PyMol [3] structure, it is necessary to select using the “mouse” manipulator one ligand atom(a) and one protein atoms(A), to which restrictions should be applied.
 
-Then, in the visualization window of the PyMol [3] structure, it is necessary to select using the “mouse” manipulator three ligand atoms and three protein atoms, to which restrictions should be applied.![image](images/choose5.png)
+
 
 In window 2, the value of the correction to the free energy arising due to restraints will be displayed,               ![image](images/OutPut.png) 
 
