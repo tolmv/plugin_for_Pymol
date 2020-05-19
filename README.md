@@ -12,7 +12,9 @@ You need choice in Option Menu method of select atoms:
 
 ![image](images/select6.png)
 
-Then, in the visualization window of the PyMol [3] structure, it is necessary to select using the “mouse” manipulator three ligand atoms and three protein atoms, to which restrictions should be applied.![image](images/choose5.png)
+Then, in the visualization window of the PyMol [3] structure, it is necessary to select using the “mouse” manipulator three ligand atoms and three protein atoms, to which restrictions should be applied.
+
+![image](images/choose5.png)
 
 * Select 2 Atoms
 
@@ -22,7 +24,9 @@ In the visualization window of the PyMol [3] structure, it is necessary to selec
 
 
 
-In window 2, the value of the correction to the free energy arising due to restraints will be displayed,               ![image](images/OutPut.png) 
+In window 2, the value of the correction to the free energy arising due to restraints will be displayed,
+
+![image](images/OutPut.png) 
 
 and you will be asked to save the force constants in the Gromacs topology file.![image](images/res_topol.png)
 
