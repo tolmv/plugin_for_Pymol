@@ -8,7 +8,7 @@ PyFepRestr is a plug-in designed to set restraints on ligand atoms in the active
 
 At the beginning of the work, it is necessary to indicate in Table 1 the values of the force constants and temperatures necessary for calculating the free energy corrections according to the Boresch formula \[1].
 You need choice in Option Menu method of select atoms:
-* ** Select 6 Atoms **
+* **Select 6 Atoms**
 
 ![image](images/select6.png)
 
@@ -16,7 +16,7 @@ Then, in the visualization window of the PyMol [3] structure, it is necessary to
 
 ![image](images/choose5.png)
  
-* ** Select 2 Atoms **
+* **Select 2 Atoms**
 
 ![image](images/select2.png)
 
