@@ -10,10 +10,13 @@ try:
     from Tkinter import BooleanVar, StringVar, OptionMenu, Radiobutton, Entry, Label, Button, Toplevel, W
     from tkFont import Font
     from tkMessageBox import showinfo
+    from tkSimpleDialog import askfloat
 except ImportError:
     from tkinter import BooleanVar, StringVar, OptionMenu, Radiobutton, Entry, Label, Button, Toplevel, W
     from tkinter.font import Font
     from tkinter.messagebox import showinfo
+    from tkinter.simpledialog import askfloat
+
 
 from .wizard import RestraintWizard, RestraintWizardTwo
 
@@ -124,7 +127,7 @@ class Restraints(object):
 
         self.select_atoms = StringVar()
         self.select_atoms.set("Select 6 atoms")
-        atoms_list = ["Select 6 atoms", "Select 2 atoms"]
+        atoms_list = ["Select 6 atoms", "Select Ligand"]
         menu = OptionMenu(self.main, self.select_atoms, *atoms_list)
         menu.grid(row=11, column=3, padx=5, pady=5)
 
@@ -165,11 +168,14 @@ class Restraints(object):
         self.bondForceParams['K_phi_ba'] = self.validated_values[4]  # force constant for dihedral (kJ/mol/rad^2)
         self.bondForceParams['K_phi_aA'] = self.validated_values[5]  # force constant for dihedral (kJ/mol/rad^2)
         self.bondForceParams['K_phi_AB'] = self.validated_values[6]  # force constant for dihedral (kJ/mol/rad^2)
-        showinfo('Info', 'Now choose the atoms you need')
         if self.select_atoms.get() == 'Select 6 atoms':
             wiz = RestraintWizard(self.parent, self.bondForceParams, self.atoms_def)
+            showinfo('Info', 'Now choose the atoms you need')
+
         else:
-            wiz = RestraintWizardTwo(self.parent, self.bondForceParams, self.atoms_def)
+            self.num_around = askfloat('Float', 'Enter the average distance to the protein atom from the ligand')
+            wiz = RestraintWizardTwo(self.parent, self.bondForceParams, self.atoms_def, self.num_around)
+            showinfo('Info', 'Now choose the ligand you need')
         cmd.set_wizard(wiz)
         cmd.refresh_wizard()
         self.main.withdraw()
