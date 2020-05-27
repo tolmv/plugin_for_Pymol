@@ -3,6 +3,7 @@ from __future__ import absolute_import
 
 from pymol import cmd, CmdException
 from pymol.wizard import Wizard
+from random import randint
 
 try:
     from Tkinter import Toplevel, LEFT, W, Button, Label
@@ -199,18 +200,17 @@ class RestraintWizard(Wizard):
         self.bondForceParams['index_C'] = args[11]
 
 class RestraintWizardTwo(RestraintWizard):
-    def __init__(self, parent, bondForceParams, atoms_def):
+    def __init__(self, parent, bondForceParams, atoms_def, num):
         RestraintWizard.__init__(self, parent, bondForceParams, atoms_def)
         # some attributes to do with picking
         self.pick_count = 2
-        self.pick_count_max = 3
+        self.pick_count_max = 2
+        #distance atoms around ligand
+        self.num = num
 
     def get_prompt(self):
         self.prompt = None
-        if self.pick_count == 2:
-            self.prompt = ['Please click on the first (a) atom...']
-        elif self.pick_count == 3:
-            self.prompt = ['Please click on the second (A) atom...']
+        self.prompt = ['Please click on the any atom of ligand...']
         return self.prompt
 
     def doFinish(self):
@@ -219,8 +219,36 @@ class RestraintWizardTwo(RestraintWizard):
         RestraintWizard.doFinish(self)
 
     def selectLigand(self):
-        index_a = cmd.id_atom("pw2")
-        index_A = cmd.id_atom("pw3")
+        index_x = cmd.id_atom("pw2")
+
+        cmd.select("ligand", "(byres id {0:d}) and not "
+                               "(hydrogens or name H*)".format(index_x))
+
+        sele = cmd.get_model("ligand")
+        list_atom = [[0, 0]] * len(sele.atom)
+        for i in range(len(sele.atom)):
+            cmd.select("prot", "(id {0:d} around {1:}) and (polymer and backbone) and not "
+                               "(hydrogens or name H* or id {0:d})".format(sele.atom[i].id, float(self.num)))
+            atomProt = cmd.get_model("prot")
+            if not atomProt.atom:
+                cmd.select("prot", "(id {0:d} around {1:}) and (polymer) and not "
+                                   "(hydrogens or name H* or id {0:d})".format(sele.atom[i].id, float(self.num)))
+                atomProt = cmd.get_model("prot")
+
+            list_atom[i] = [sele.atom[i].id, atomProt.atom[randint(0, len(atomProt.atom) - 1)].id]
+
+            cmd.delete("prot")
+        if not atomProt.atom:
+            showerror(self.parent, "Error", "Not found atoms protein around")
+            self.reset()
+        #print(list_atom, len(list_atom))
+        rand_a = randint(0, len(list_atom) - 1)
+        self.index_a = index_a = list_atom[rand_a][0]
+        self.index_A = index_A = list_atom[rand_a][1]
+        cmd.select("pw2", "id {:d}".format(index_a))
+        cmd.select("pw3", "id {:d}".format(index_A))
+        self.createAtomObj(2)
+        self.createAtomObj(3)
         cmd.select("bounded", "(bound_to id {0:d}) and not "
                            "(hydrogens or name H* or id {0:d} or id {1:d})".format(index_a, index_A))
         atoms = cmd.get_model("bounded")
@@ -257,10 +285,11 @@ class RestraintWizardTwo(RestraintWizard):
         self.createAtomObj(0)
 
     def selectProt(self):
-        index_a = cmd.id_atom("pw2")
-        index_A = cmd.id_atom("pw3")
+        index_a = self.index_a
+        index_A = self.index_A
+
         cmd.select("bounded", "(bound_to id {0:d}) and not "
-                           "(hydrogens or name H* or id {0:d} or id {1:d})".format(index_A, index_a))
+                              "(hydrogens or name H* or id {0:d} or id {1:d})".format(index_A, index_a))
         atoms = cmd.get_model("bounded")
         cmd.delete("bounded")
         if not atoms.atom:
